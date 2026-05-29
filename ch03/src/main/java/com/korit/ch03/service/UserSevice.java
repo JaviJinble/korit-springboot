@@ -27,7 +27,6 @@ public class UserSevice {
                 .username(newUser.getUsername())
                 .name(newUser.getName())
                 .email(newUser.getEmail())
-                .createAt(newUser.getCreateAt())
                 .build();
     }
 
