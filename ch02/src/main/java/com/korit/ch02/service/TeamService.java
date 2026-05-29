@@ -36,7 +36,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TeamService {
-
     private final TeamMemberQueryService teamMemberQueryService;
 
     public List<Member> findByTeamId(Long teamId) {

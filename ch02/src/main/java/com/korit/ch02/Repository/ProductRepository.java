@@ -12,6 +12,6 @@ public class ProductRepository {
         product.setId(productId);
         product.setName("노트북");
 
-        return Optional.of(product);
+        return Optional.of(null);
     }
 }
