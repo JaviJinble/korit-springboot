@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    include: secret
+
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml   # classpath은 resources를 의미한다. mapper.xml 파일 경로 설정
+  type-aliases-package: com.korit.ch03.entity   # type-aliases-package 은 자동으로 entity 연결을 한다. mapper.xml안에서 entity 참조 경로 설정
+  configuration:
+    map-underscore-to-camel-case: true          # 스네이크 표기법을 카멜 표기법으로 자동 치환
+    jdbc-type-for-null: 'NULL'                  # JAVA에서 null값을 MySQL의 NULL이라는 표기로 변환

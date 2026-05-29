@@ -30,7 +30,7 @@ import java.util.List;
  *
  * 3. 해결 방법 - 공통 의존성을 별도 서비스로 분리
  * 두 서비스가 서로를 참조하는 원인은 역할이 명확히 분리되지 않았기 때문.
- * TeamService가 멤버를 알 필요가 있고, Me
+ * TeamService가 멤버를 알 필요가 있고,
  * mberService가 팀을 알 필요가 있다면
  * -> 이 공통 관신사를 처리할 TeamMemberService를 만들어 분리한다.
  *
