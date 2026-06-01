@@ -2,11 +2,95 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.korit.ch03.mapper.UserMapper">
+<mapper namespace="com.korit.ch03.domain.user.mapper.UserMapper">
+    <resultMap id="RoleMap" type="Role">
+        <id property="id" column="rol_id" />
+        <result property="roleName" column="rol_name" />
+        <result property="createdAt" column="rol_created_at" />
+        <result property="updatedAt" column="rol_updated_at" />
+    </resultMap>
+    <resultMap id="UserRoleMap" type="userRole">
+        <id property="id" column="usrl_id" />
+        <result property="userId" column="user_id" />
+        <result property="roleId" column="role_id" />
+        <result property="createdAt" column="usrl_created_at" />
+        <result property="updatedAt" column="usrl_updated_at" />
+        <association property="role" resultMap="RoleMap" /> <!-- 1 대 1 -->
+    </resultMap>
+    <resultMap id="UserMap" type="User">
+        <id property="id" column="usr_id" />
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="name" column="name" />
+        <result property="email" column="email" />
+        <result property="createdAt" column="usr_created_at" />
+        <result property="updatedAt" column="usr_updated_at" />
+        <collection property="userRoles" javaType="list" resultMap="UserRoleMap" /> <!-- 1 대 N -->
+    </resultMap>
 
     <insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
         insert into users values
             (default, #{username}, #{password}, #{name}, #{email}, now(), now())
     </insert>
+    <select id="selectAll" resultType="User">
+        select
+            id,
+            username,
+            password,
+            name,
+            email,
+            created_at,
+            updated_at
+        from
+            users
+        order by
+            id
+    </select>
+
+    <select id="selectById" resultMap="UserMap">
+        select
+            usr.id as usr_id,
+            usr.username,
+            usr.password,
+            usr.name,
+            usr.email,
+            usr.created_at as usr_created_at,
+            usr.updated_at as usr_updated_at,
+
+            usrl.id as usrl_id,
+            usrl.user_id,
+            usrl.role_id,
+            usrl.created_at as usrl_created_at,
+            usrl.updated_at as usrl_updated_at,
+
+            rol.id as rol_id,
+            rol.role_name as rol_name,
+            rol.created_at as rol_created_at,
+            rol.updated_at as rol_updated_at
+        from
+            users usr
+            inner join user_roles usrl on usrl.user_id = usr.id
+            inner join roles rol on rol.id = usrl.role_id
+        where
+            usr.id = #{userId}
+        order by
+            usr.id
+    </select>
+    <select id="selectByUsername" resultType="User">
+        select
+            id,
+            username,
+            password,
+            name,
+            email,
+            created_at,
+            updated_at
+        from
+            users
+        where
+            username = #{username}
+        order by
+            id
+    </select>
 
 </mapper>

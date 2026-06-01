@@ -1,4 +1,4 @@
-package com.korit.ch03.controller.user.dto;
+package com.korit.ch03.domain.user.dto;
 
 import lombok.Data;
 

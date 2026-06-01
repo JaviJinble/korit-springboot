@@ -6,20 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class Role {
     private Long id;
-    private String username;
-    private String password;
-    private String name;
-    private String email;
+    private String roleName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    private List<UserRole> userRoles;
 }

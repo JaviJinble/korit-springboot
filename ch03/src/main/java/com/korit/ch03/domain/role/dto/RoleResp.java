@@ -1,4 +1,4 @@
-package com.korit.ch03.entity;
+package com.korit.ch03.domain.role.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,20 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class User {
+@AllArgsConstructor
+public class RoleResp {
     private Long id;
-    private String username;
-    private String password;
-    private String name;
-    private String email;
+    private String roleName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    private List<UserRole> userRoles;
 }
