@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.korit.ch03.mapper.ProductMapper">
+    <resultMap id="categoryMap" type="Category">
+        <id property="id" column="ctgr_id" />
+        <result property="categoryName" column="category_name" />
+        <result property="createdAt" column="ctgr_created_at" />
+        <result property="updatedAt" column="ctgr_updated_at" />
+    </resultMap>
+    <resultMap id="productMap" type="Product">
+        <id property="id" column="prdt_id" />
+        <result property="productName" column="product_name" />
+        <result property="categoryId" column="category_id" />
+        <result property="price" column="price" />
+        <result property="createdAt" column="prdt_created_at" />
+        <result property="updatedAt" column="prdt_updated_at" />
+        <association property="category" resultMap="categoryMap" />
+    </resultMap>
+
+    <insert id="insert" parameterType="Product" useGeneratedKeys="true" keyProperty="id">
+        insert into products values
+            (default, #{productName}, #{categoryId}, #{price}, now(), now())
+    </insert>
+    <select id="selectAll" resultMap="productMap">
+        select
+            prdt.id as prdt_id,
+            prdt.product_name,
+            prdt.category_id,
+            prdt.price,
+            prdt.created_at as prdt_created_at,
+            prdt.updated_at as prdt_updated_at,
+
+            ctgr.id as ctgr_id,
+            ctgr.category_name,
+            ctgr.created_at as ctgr_created_at,
+            ctgr.updated_at as ctgr_updated_at
+        from
+            products prdt
+            inner join categories ctgr on ctgr.id = prdt.category_id
+        order by
+            prdt.id
+    </select>
+
+    <select id="selectById" resultMap="productMap">
+        select
+            prdt.id as prdt_id,
+            prdt.product_name,
+            prdt.category_id,
+            prdt.price,
+            prdt.created_id as prdt_created_id,
+            prdt.updated_id as prdt_updated_id,
+
+            ctgr.id as ctgr_id,
+            ctgr.category_name,
+            ctgr.created_id as ctgr_created_id,
+            ctgr.updated_id as ctgr_updated_id
+        from
+            products prdt
+            inner join categories ctgr on ctgr.id = prdt.category_id
+        where
+            prdt.id = #{productId}
+        order by
+            prdt.id
+    </select>
+
+    <select id="selectByProductName" resultMap="productMap">
+        select
+            prdt.id as prdt_id,
+            prdt.product_name,
+            prdt.category_id,
+            prdt.price,
+            prdt.created_at as prdt_created_at,
+            prdt.updated_at as prdt_updated_at,
+
+            ctgr.id as ctgr_id,
+            ctgr.category_name,
+            ctgr.created_at as ctgr_created_at,
+            ctgr.updated_at as ctgr_updated_at
+        from
+            products prdt
+            inner join categories ctgr
+            on ctgr.id = prdt.category_id
+        where
+            prdt.product_name = #{productName}
+        order by
+            prdt.id
+    </select>
+
+
+
+</mapper>

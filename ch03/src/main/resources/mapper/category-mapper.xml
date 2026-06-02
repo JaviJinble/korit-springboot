@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 8 -->
+<mapper namespace="com.korit.ch03.mapper.CategoryMapper">
+
+
+    <insert id="insert">
+        insert into categories values
+        (default, #{categoryName}, now(), now())
+    </insert>
+
+    <select id="selectAll" resultType="Category">
+        select
+        id,
+        category_name,
+        created_at,
+        updated_at
+        from
+        categories
+        order by
+        id
+    </select>
+    <select id="selectById" resultType="Category">
+        select
+        id,
+        category_name,
+        created_at,
+        updated_at
+        from
+        categories
+        where
+        id = #{categoryId}
+        order by
+        id
+    </select>
+    <select id="selectByCategoryName" resultType="Category">
+        select
+        id,
+        category_name,
+        created_at,
+        updated_at
+        from
+        categories
+        where
+        category_name = #{category_name}
+        order by
+        id
+    </select>
+</mapper>

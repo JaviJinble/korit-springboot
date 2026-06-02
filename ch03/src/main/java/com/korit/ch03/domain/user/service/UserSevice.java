@@ -58,6 +58,19 @@ public class UserSevice {
                     .username(user.getUsername())
                     .name(user.getName())
                     .email(user.getEmail())
+                    .roles(
+                            user.getUserRoles() == null
+                                ? List.of()
+                                : user.getUserRoles().stream()
+                                    .map(userRole -> {
+                                        Role role = userRole.getRole();
+                                        return new UserResp.Role(
+                                                    role.getId(),
+                                                    role.getRoleName()
+                                        );
+                                    })
+                                    .toList()
+                    )
                     .build())
                 .toList();
     }

@@ -32,21 +32,33 @@
         insert into users values
             (default, #{username}, #{password}, #{name}, #{email}, now(), now())
     </insert>
-    <select id="selectAll" resultType="User">
-        select
-            id,
-            username,
-            password,
-            name,
-            email,
-            created_at,
-            updated_at
-        from
-            users
-        order by
-            id
-    </select>
+    <select id="selectAll" resultMap="UserMap">
+    select
+        usr.id as usr_id,
+        usr.username,
+        usr.password,
+        usr.name,
+        usr.email,
+        usr.created_at as usr_created_at,
+        usr.updated_at as usr_updated_at,
 
+        usrl.id as usrl_id,
+        usrl.user_id,
+        usrl.role_id,
+        usrl.created_at as usrl_created_at,
+        usrl.updated_at as usrl_updated_at,
+
+        rol.id as rol_id,
+        rol.role_name as rol_name,
+        rol.created_at as rol_created_at,
+        rol.updated_at as rol_updated_at
+    from
+        users usr
+        left join user_roles usrl on usrl.user_id = usr.id
+        left join roles rol on rol.id = usrl.role_id
+    order by
+        usr.id
+    </select>
     <select id="selectById" resultMap="UserMap">
         select
             usr.id as usr_id,

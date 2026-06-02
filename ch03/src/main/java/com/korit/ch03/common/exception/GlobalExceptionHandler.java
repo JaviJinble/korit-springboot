@@ -13,4 +13,13 @@ public class GlobalExceptionHandler {
         String message = "중복된 값입니다.";
         return ResponseEntity.badRequest().body(ApiResponse.fail(message, e));
     }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ApiResponse> categoryNotFound(
+            CategoryNotFoundException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(ApiResponse.fail(e.getMessage(), e));
+    }
 }
