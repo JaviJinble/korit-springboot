@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    include: secret
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.korit.ch04api.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    jdbc-type-for-null: 'NULL'
+
+db:
+  init-status:
+    - roles: false
