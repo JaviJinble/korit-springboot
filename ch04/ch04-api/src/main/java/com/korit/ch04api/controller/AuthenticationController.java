@@ -1,9 +1,9 @@
 package com.korit.ch04api.controller;
 
-import com.korit.ch04api.dto.ApiResponse;
-import com.korit.ch04api.dto.AuthUserCreateRequest;
-import com.korit.ch04api.dto.AuthUserResp;
+import com.korit.ch04api.dto.*;
+import com.korit.ch04api.service.AuthenticationService;
 import com.korit.ch04api.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,12 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final UserService userService;
+    private final AuthenticationService authenticationService;
+
 
     @PostMapping("/users")
-    public ResponseEntity<ApiResponse> singUp(@RequestBody AuthUserCreateRequest dto) {
+    public ResponseEntity<ApiResponse<CreateResponse>> singUp(@Valid @RequestBody AuthUserCreateRequest dto) {
 
-        return ResponseEntity.ok(ApiResponse.success());
+        return ResponseEntity.ok(ApiResponse.success(userService.authCreate(dto)));
     }
 
+    @PostMapping("/users/token")
+    public ResponseEntity<ApiResponse<TokenResponse>> signIn(@Valid @RequestBody AuthUserTokenRequest dto) {
 
+        return ResponseEntity.ok(ApiResponse.success(authenticationService.authenticate(dto)));
+    }
 }
