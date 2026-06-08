@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.korit.ch04api.mapper.TodoMapper">
+
+    <resultMap id="TodoResultMap" type="com.korit.ch04api.entity.Todo">
+        <id property="id" column="todo_id" />
+        <result property="userId" column="user_id" />
+        <result property="content" column="content" />
+        <result property="isCompleted" column="is_completed" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <insert id="insertTodo" parameterType="com.korit.ch04api.entity.Todo" useGeneratedKeys="true" keyProperty="id">
+        insert into todo_tb
+        (user_id, content, is_completed, created_at, updated_at)
+        values
+        (#{userId}, #{content}, 0, now(), now())
+    </insert>
+
+    <select id="selectTodosByUserId" resultMap="TodoResultMap">
+        select
+            todo_id,
+            user_id,
+            content,
+            is_completed,
+            created_at,
+            updated_at
+        from
+            todo_tb
+        where
+            user_id = #{userId}
+        order by
+            created_at desc
+    </select>
+
+    <update id="toggleTodoStatus">
+        update todo_tb
+        set
+            is_completed = not is_completed,
+            updated_at = now()
+        where
+            todo_id = #{todoId}
+            and user_id = #{userId}
+    </update>
+
+</mapper>
