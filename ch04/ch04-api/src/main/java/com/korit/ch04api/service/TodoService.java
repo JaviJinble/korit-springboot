@@ -27,6 +27,8 @@ public class TodoService {
         Todo todo = Todo.builder()
                 .userId(userId)
                 .content(reqDto.getContent())
+                .deadline(reqDto.getDeadline())
+                .priority(reqDto.getPriority())
                 .build();
         
         todoMapper.insertTodo(todo);
@@ -43,7 +45,7 @@ public class TodoService {
 
     @Transactional(rollbackFor = Exception.class)
     public void updateTodo(Long userId, Long todoId, TodoReqDto reqDto) {
-        todoMapper.updateTodoContent(todoId, userId, reqDto.getContent());
+        todoMapper.updateTodoContent(todoId, userId, reqDto.getContent(), reqDto.getDeadline(), reqDto.getPriority());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -56,6 +58,8 @@ public class TodoService {
                 .id(todo.getId())
                 .userId(todo.getUserId())
                 .content(todo.getContent())
+                .deadline(todo.getDeadline())
+                .priority(todo.getPriority())
                 .isCompleted(todo.getIsCompleted())
                 .createdAt(todo.getCreatedAt())
                 .updatedAt(todo.getUpdatedAt())

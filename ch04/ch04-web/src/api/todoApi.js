@@ -5,8 +5,8 @@ export const getTodos = async () => {
     return response.data;
 };
 
-export const addTodo = async (content) => {
-    const response = await axiosInstance.post("/api/todos", { content });
+export const addTodo = async ({ content, deadline, priority }) => {
+    const response = await axiosInstance.post("/api/todos", { content, deadline, priority });
     return response.data;
 };
 
@@ -15,8 +15,8 @@ export const toggleTodo = async (todoId) => {
     return response.data;
 };
 
-export const updateTodo = async ({ todoId, content }) => {
-    const response = await axiosInstance.put(`/api/todos/${todoId}`, { content });
+export const updateTodo = async ({ todoId, content, deadline, priority }) => {
+    const response = await axiosInstance.put(`/api/todos/${todoId}`, { content, deadline, priority });
     return response.data;
 };
 

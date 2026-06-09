@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "../store/authStore";
-import { signIn, signUp } from "../api/authApi";
+import { getUser, logout, signIn, signUp } from "../api/authApi";
 
 export function useSignUp() {
     const navigate = useNavigate();
@@ -37,3 +37,25 @@ export function useSignIn() {
         }
     })
 };
+
+export function useMe() {
+    return useQuery({
+        queryKey: ["me"],
+        queryFn: getUser,
+    });
+}
+
+export function useLogout() {
+    const navigate = useNavigate();
+    const removeToken = useAuthStore((state) => state.removeToken);
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: logout,
+        onSuccess: () => {
+            removeToken();
+            queryClient.clear();
+            navigate("/auth/signin", { replace: true });
+        },
+    });
+}

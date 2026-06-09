@@ -40,7 +40,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                PrioncipalUser prioncipalUser = new PrioncipalUser(foundUser);
+                PrioncipalUser prioncipalUser = new PrioncipalUser(foundUser, null);
 
                 UsernamePasswordAuthenticationToken authenticationToken
                         = new UsernamePasswordAuthenticationToken(prioncipalUser, "", prioncipalUser.getAuthorities());

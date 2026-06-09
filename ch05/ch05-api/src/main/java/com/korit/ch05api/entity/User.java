@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class User {
     private Long id;
-    private String username;
-    private String password;
     private String name;
     private String email;
+    private String provider; // google, naver, kakao
+    private String providerId; // sub, id
     private Long roleId;
     private Role role;
 }

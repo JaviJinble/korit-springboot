@@ -6,6 +6,7 @@ import SignIn from "./pages/SignIn/SignIn";
 import DeepSpaceLayout from "./components/DeepSpaceLayout/DeepSpaceLayout";
 import { globalStyles } from "./styles/global";
 import Dash from "./pages/Dash/Dash";
+import MyPage from "./pages/MyPage/MyPage";
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
 
                     <Route element={<ProtectedRoutes />}>
                       <Route path="/dash" element={<Dash />} />
+                      <Route path="/mypage" element={<MyPage />} />
                     </Route>
                 </Routes>
             </DeepSpaceLayout>

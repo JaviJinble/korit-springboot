@@ -8,6 +8,8 @@
         <id property="id" column="todo_id" />
         <result property="userId" column="user_id" />
         <result property="content" column="content" />
+        <result property="deadline" column="deadline" />
+        <result property="priority" column="priority" />
         <result property="isCompleted" column="is_completed" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAt" column="updated_at" />
@@ -15,9 +17,9 @@
 
     <insert id="insertTodo" parameterType="com.korit.ch04api.entity.Todo" useGeneratedKeys="true" keyProperty="id">
         insert into todo_tb
-        (user_id, content, is_completed, created_at, updated_at)
+        (user_id, content, deadline, priority, is_completed, created_at, updated_at)
         values
-        (#{userId}, #{content}, 0, now(), now())
+        (#{userId}, #{content}, #{deadline}, #{priority}, 0, now(), now())
     </insert>
 
     <select id="selectTodosByUserId" resultMap="TodoResultMap">
@@ -25,6 +27,8 @@
             todo_id,
             user_id,
             content,
+            deadline,
+            priority,
             is_completed,
             created_at,
             updated_at
@@ -50,6 +54,8 @@
         update todo_tb
         set
             content = #{content},
+            deadline = #{deadline},
+            priority = #{priority},
             updated_at = now()
         where
             todo_id = #{todoId}

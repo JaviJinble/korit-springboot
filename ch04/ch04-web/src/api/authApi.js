@@ -15,7 +15,7 @@ export const signIn = async (signInData) => {
 
 // 로그아웃
 export const logout = async () => {
-    await axiosInstance.post("/api/auth/logout");
+    localStorage.removeItem("accessToken");
 }
 
 // 사용자정보 조회
