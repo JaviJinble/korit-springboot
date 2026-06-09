@@ -76,7 +76,17 @@ function Dash() {
 
     const deleteTodoMutation = useMutation({
         mutationFn: deleteTodo,
-        onSuccess: () => {
+        onSuccess: (_, todoId) => {
+            queryClient.setQueryData(["todos"], (oldData) => {
+                if (!oldData?.body) {
+                    return oldData;
+                }
+
+                return {
+                    ...oldData,
+                    body: oldData.body.filter((todo) => todo.id !== todoId),
+                };
+            });
             queryClient.invalidateQueries({ queryKey: ["todos"] });
         },
     });
@@ -99,7 +109,6 @@ function Dash() {
             ...todo,
             daysLeft: getDaysUntilDeadline(todo.deadline),
         }))
-        .filter((todo) => todo.daysLeft <= 3)
         .sort((a, b) => a.daysLeft - b.daysLeft)
         .slice(0, 5);
     const filteredTodos = todos.filter((todo) => {
@@ -561,6 +570,9 @@ const alertList = css`
     display: flex;
     flex-direction: column;
     gap: 8px;
+    max-height: 178px;
+    overflow-y: auto;
+    padding-right: 4px;
     list-style: none;
 
     li {
@@ -684,6 +696,9 @@ const list = css`
     display: flex;
     flex-direction: column;
     gap: 10px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 4px;
     list-style: none;
 `;
 

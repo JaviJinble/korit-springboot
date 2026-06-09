@@ -39,7 +39,7 @@ export const contentWrapper = css`
     overflow-y: auto;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
 `;
 
 export const layer1 = css`
