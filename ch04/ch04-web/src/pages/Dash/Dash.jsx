@@ -60,9 +60,7 @@ function Dash() {
 
     const toggleTodoMutation = useMutation({
         mutationFn: toggleTodo,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["todos"] });
-        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["todos"] }),
     });
 
     const updateTodoMutation = useMutation({
@@ -76,19 +74,7 @@ function Dash() {
 
     const deleteTodoMutation = useMutation({
         mutationFn: deleteTodo,
-        onSuccess: (_, todoId) => {
-            queryClient.setQueryData(["todos"], (oldData) => {
-                if (!oldData?.body) {
-                    return oldData;
-                }
-
-                return {
-                    ...oldData,
-                    body: oldData.body.filter((todo) => todo.id !== todoId),
-                };
-            });
-            queryClient.invalidateQueries({ queryKey: ["todos"] });
-        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["todos"] }),
     });
 
     const todos = todosQuery.data?.body ?? [];
@@ -148,10 +134,6 @@ function Dash() {
         });
     };
 
-    const handleToggle = async (todoId) => {
-        await toggleTodoMutation.mutateAsync(todoId);
-    };
-
     const handleEditStart = (todo) => {
         setEditingTodoId(todo.id);
         setEditingTodoForm({
@@ -180,7 +162,7 @@ function Dash() {
     };
 
     const handleDelete = async (todoId) => {
-        if (!window.confirm("Todo를 삭제할까요?")) {
+        if (!window.confirm("Delete this todo?")) {
             return;
         }
         await deleteTodoMutation.mutateAsync(todoId);
@@ -194,62 +176,44 @@ function Dash() {
                     <div css={headerActions}>
                         <span>{totalCount} items</span>
                         <button type="button" onClick={() => navigate("/mypage")}>
-                            마이페이지
+                            My Page
                         </button>
                         <button type="button" onClick={() => logoutMutation.mutate()} disabled={logoutMutation.isPending}>
-                            로그아웃
+                            Logout
                         </button>
                     </div>
                 </div>
 
                 <div css={summary}>
-                    <div>
-                        <strong>{totalCount}</strong>
-                        <span>전체</span>
-                    </div>
-                    <div>
-                        <strong>{completedCount}</strong>
-                        <span>완료</span>
-                    </div>
-                    <div>
-                        <strong>{activeCount}</strong>
-                        <span>진행중</span>
-                    </div>
-                    <div>
-                        <strong>{completionRate}%</strong>
-                        <span>완료율</span>
-                    </div>
+                    <SummaryItem label="Total" value={totalCount} />
+                    <SummaryItem label="Completed" value={completedCount} />
+                    <SummaryItem label="Active" value={activeCount} />
+                    <SummaryItem label="Rate" value={`${completionRate}%`} />
                 </div>
 
                 <div css={dashboardDetails}>
-                    <div css={priorityPanel}>
+                    <div css={detailPanel}>
                         <div css={sectionTitle}>
                             <strong>Priority</strong>
-                            <span>우선순위별 Todo</span>
+                            <span>By priority</span>
                         </div>
                         <div css={priorityRows}>
-                            <div>
-                                <span css={priorityBadge("HIGH")}>HIGH</span>
-                                <strong>{priorityCounts.HIGH}</strong>
-                            </div>
-                            <div>
-                                <span css={priorityBadge("MEDIUM")}>MEDIUM</span>
-                                <strong>{priorityCounts.MEDIUM}</strong>
-                            </div>
-                            <div>
-                                <span css={priorityBadge("LOW")}>LOW</span>
-                                <strong>{priorityCounts.LOW}</strong>
-                            </div>
+                            {["HIGH", "MEDIUM", "LOW"].map((priority) => (
+                                <div key={priority}>
+                                    <span css={priorityBadge(priority)}>{priority}</span>
+                                    <strong>{priorityCounts[priority]}</strong>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
-                    <div css={alertPanel}>
+                    <div css={detailPanel}>
                         <div css={sectionTitle}>
                             <strong>Deadline Alert</strong>
-                            <span>마감 임박 Todo</span>
+                            <span>Upcoming todos</span>
                         </div>
                         {deadlineAlerts.length === 0 ? (
-                            <p css={alertEmpty}>{totalCount === 0 ? "Todo를 추가하면 마감 알림이 표시됩니다." : "가까운 마감 일정이 없습니다."}</p>
+                            <p css={message}>{totalCount === 0 ? "Add a todo to see deadline alerts." : "No upcoming deadlines."}</p>
                         ) : (
                             <ul css={alertList}>
                                 {deadlineAlerts.map((todo) => (
@@ -270,50 +234,46 @@ function Dash() {
                     <input
                         type="text"
                         name="content"
-                        placeholder="할 일을 입력하세요"
+                        placeholder="Add a todo"
                         value={todoForm.content}
                         onChange={handleTodoFormChange}
                     />
-                    <input
-                        type="date"
-                        name="deadline"
-                        value={todoForm.deadline}
-                        onChange={handleTodoFormChange}
-                    />
+                    <input type="date" name="deadline" value={todoForm.deadline} onChange={handleTodoFormChange} />
                     <select name="priority" value={todoForm.priority} onChange={handleTodoFormChange}>
                         <option value="HIGH">HIGH</option>
                         <option value="MEDIUM">MEDIUM</option>
                         <option value="LOW">LOW</option>
                     </select>
                     <button type="submit" disabled={addTodoMutation.isPending}>
-                        추가
+                        Add
                     </button>
                 </form>
 
                 <div css={tabs}>
-                    <button type="button" css={tabButton(filter === FILTERS.ALL)} onClick={() => setFilter(FILTERS.ALL)}>
-                        전체
-                    </button>
-                    <button type="button" css={tabButton(filter === FILTERS.ACTIVE)} onClick={() => setFilter(FILTERS.ACTIVE)}>
-                        진행중
-                    </button>
-                    <button type="button" css={tabButton(filter === FILTERS.COMPLETED)} onClick={() => setFilter(FILTERS.COMPLETED)}>
-                        완료
-                    </button>
+                    {Object.values(FILTERS).map((filterName) => (
+                        <button
+                            key={filterName}
+                            type="button"
+                            css={tabButton(filter === filterName)}
+                            onClick={() => setFilter(filterName)}
+                        >
+                            {filterName}
+                        </button>
+                    ))}
                 </div>
 
-                {todosQuery.isLoading && <p css={message}>불러오는 중...</p>}
-                {todosQuery.isError && <p css={message}>Todo 목록을 불러오지 못했습니다.</p>}
+                {todosQuery.isLoading && <p css={message}>Loading...</p>}
+                {todosQuery.isError && <p css={message}>Could not load todos.</p>}
 
                 {!todosQuery.isLoading && !todosQuery.isError && todos.length === 0 && (
                     <div css={emptyState}>
-                        <strong>아직 등록된 할 일이 없습니다.</strong>
-                        <span>오늘 할 일을 추가해보세요.</span>
+                        <strong>No todos yet.</strong>
+                        <span>Add your first task for today.</span>
                     </div>
                 )}
 
                 {!todosQuery.isLoading && !todosQuery.isError && todos.length > 0 && filteredTodos.length === 0 && (
-                    <p css={message}>선택한 상태의 Todo가 없습니다.</p>
+                    <p css={message}>No todos match this filter.</p>
                 )}
 
                 {filteredTodos.length > 0 && (
@@ -323,9 +283,9 @@ function Dash() {
                                 <button
                                     type="button"
                                     css={checkButton(todo.isCompleted)}
-                                    onClick={() => handleToggle(todo.id)}
+                                    onClick={() => toggleTodoMutation.mutate(todo.id)}
                                     disabled={toggleTodoMutation.isPending}
-                                    aria-label="완료 상태 변경"
+                                    aria-label="Toggle todo status"
                                 >
                                     {todo.isCompleted ? "✓" : ""}
                                 </button>
@@ -358,10 +318,10 @@ function Dash() {
                                                 onClick={() => handleEditSave(todo.id)}
                                                 disabled={updateTodoMutation.isPending}
                                             >
-                                                저장
+                                                Save
                                             </button>
                                             <button type="button" onClick={handleEditCancel}>
-                                                취소
+                                                Cancel
                                             </button>
                                         </div>
                                     </div>
@@ -370,21 +330,21 @@ function Dash() {
                                         <div css={todoBody}>
                                             <span css={contentText(todo.isCompleted)}>{todo.content}</span>
                                             <div css={meta}>
-                                                <span>{todo.deadline || "기한 없음"}</span>
+                                                <span>{todo.deadline || "No deadline"}</span>
                                                 <span css={priorityBadge(todo.priority)}>{todo.priority || "MEDIUM"}</span>
-                                                <span>{todo.isCompleted ? "완료" : "진행중"}</span>
+                                                <span>{todo.isCompleted ? "Completed" : "Active"}</span>
                                             </div>
                                         </div>
                                         <div css={actions}>
                                             <button type="button" onClick={() => handleEditStart(todo)}>
-                                                수정
+                                                Edit
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => handleDelete(todo.id)}
                                                 disabled={deleteTodoMutation.isPending}
                                             >
-                                                삭제
+                                                Delete
                                             </button>
                                         </div>
                                     </>
@@ -395,6 +355,15 @@ function Dash() {
                 )}
             </section>
         </main>
+    );
+}
+
+function SummaryItem({ label, value }) {
+    return (
+        <div>
+            <strong>{value}</strong>
+            <span>{label}</span>
+        </div>
     );
 }
 
@@ -425,9 +394,9 @@ const header = css`
     margin-bottom: 24px;
 
     h1 {
+        color: #ffffff;
         font-size: 2rem;
         font-weight: 700;
-        color: #ffffff;
     }
 
     span {
@@ -448,21 +417,7 @@ const headerActions = css`
         border-radius: 8px;
         background: rgba(255, 255, 255, 0.1);
         color: #e2e8f0;
-        font-size: 0.88rem;
         font-weight: 700;
-    }
-
-    button:hover:not(:disabled) {
-        background: rgba(0, 168, 255, 0.35);
-    }
-
-    button:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
-    }
-
-    @media (max-width: 720px) {
-        flex-wrap: wrap;
     }
 `;
 
@@ -506,18 +461,11 @@ const dashboardDetails = css`
     }
 `;
 
-const priorityPanel = css`
+const detailPanel = css`
     padding: 14px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.05);
-`;
-
-const alertPanel = css`
-    padding: 14px;
-    border: 1px solid rgba(0, 168, 255, 0.22);
-    border-radius: 10px;
-    background: rgba(0, 168, 255, 0.06);
 `;
 
 const sectionTitle = css`
@@ -529,7 +477,6 @@ const sectionTitle = css`
 
     strong {
         color: #ffffff;
-        font-size: 0.98rem;
     }
 
     span {
@@ -557,13 +504,6 @@ const priorityRows = css`
         color: #ffffff;
         font-size: 1.2rem;
     }
-`;
-
-const alertEmpty = css`
-    padding: 17px 0 4px;
-    color: #94a3b8;
-    text-align: center;
-    font-size: 0.92rem;
 `;
 
 const alertList = css`
@@ -635,11 +575,6 @@ const form = css`
         font-weight: 700;
     }
 
-    button:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
-    }
-
     @media (max-width: 720px) {
         grid-template-columns: 1fr;
 
@@ -656,7 +591,7 @@ const tabs = css`
 `;
 
 const tabButton = (isActive) => css`
-    min-width: 74px;
+    min-width: 92px;
     height: 36px;
     border: 1px solid ${isActive ? "rgba(0, 168, 255, 0.75)" : "rgba(255, 255, 255, 0.12)"};
     border-radius: 999px;
@@ -730,7 +665,6 @@ const checkButton = (isCompleted) => css`
     border-radius: 50%;
     background: ${isCompleted ? "#22c55e" : "rgba(255, 255, 255, 0.08)"};
     color: #052e16;
-    font-size: 1rem;
     font-weight: 800;
 `;
 
@@ -834,17 +768,7 @@ const actions = css`
         border-radius: 8px;
         background: rgba(255, 255, 255, 0.1);
         color: #e2e8f0;
-        font-size: 0.88rem;
         font-weight: 700;
-    }
-
-    button:hover:not(:disabled) {
-        background: rgba(0, 168, 255, 0.35);
-    }
-
-    button:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
     }
 
     @media (max-width: 720px) {

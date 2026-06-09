@@ -19,7 +19,7 @@ public class RestAuthEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setStatus(401);
-        response.setCharacterEncoding(StandardCharsets.UTF_8);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         ObjectMapper objectMapper = new ObjectMapper();
         response.getWriter().println(objectMapper.writeValueAsString(Map.of(

@@ -1,113 +1,145 @@
 import { useEffect, useState } from "react";
-import { useSignUp } from "../../hooks/useAuth";
 import { Link } from "react-router";
+import { useSignUp } from "../../hooks/useAuth";
 import * as s from "../styles";
 
-function SignUp() {
-    const REGEX = {
-        username: /^[a-z][a-z0-9_]{3,19}$/,
-        password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/,
-        name: /^[가-힣]{2,10}$|^[a-zA-Z\s]{2,30}$/,
-        email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    };
+const REGEX = {
+    username: /^[a-z][a-z0-9_]{3,19}$/,
+    password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/,
+    name: /^([a-zA-Z\s]{2,30}|[가-힣]{2,10})$/,
+    email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+};
 
-    const emptyInputs = {
-        username: "",
-        password: "",
-        confirmPassword: "",
-        name: "",
-        email: "",
-    };
-    
-    const [ signUpData, setSignUpData] = useState(emptyInputs);
-    const [ inputErrors, setInputErrors] = useState(emptyInputs);
-    const [ signUpDisabled, setSignUpDisabled ] = useState(true);
-    
+const emptyInputs = {
+    username: "",
+    password: "",
+    confirmPassword: "",
+    name: "",
+    email: "",
+};
+
+function SignUp() {
+    const [signUpData, setSignUpData] = useState(emptyInputs);
+    const [inputErrors, setInputErrors] = useState({});
+    const [signUpDisabled, setSignUpDisabled] = useState(true);
     const signUpMutation = useSignUp();
-    
+
     const handleInputChange = (e) => {
-        setSignUpData(prev => ({
+        setSignUpData((prev) => ({
             ...prev,
             [e.target.name]: e.target.value,
         }));
     };
 
-    const handleSignUpOnClick = async () => {
+    const handleSignUpSubmit = async (e) => {
+        e.preventDefault();
         await signUpMutation.mutateAsync(signUpData);
         setSignUpData(emptyInputs);
     };
-    
-    useEffect(() => {
-        setInputErrors(validate(signUpData));
-    }, [signUpData]);
-    
-    useEffect(() => {
-        const inputEmptyValuesEntries = Object.values(signUpData).filter(value => !value);
-        const inputErrorsEntries = Object.entries(inputErrors);
-        setSignUpDisabled(inputEmptyValuesEntries.length > 0 || inputErrorsEntries.length > 0);
-        
-    }, [inputErrors])
 
     const validate = ({ username, password, confirmPassword, name, email }) => {
         const errors = {};
 
         if (!REGEX.username.test(username) && !!username) {
-            errors.username = "영문 소문자로 시작, 4~20자 (숫자, 특수문자 -, _ 포함 가능)";
+            errors.username = "Start with a lowercase letter, 4-20 chars, lowercase letters/numbers/_ only.";
         }
         if (!REGEX.password.test(password) && !!password) {
-            errors.password = "영문, 숫자, 특수문자 포함 8~20자";
+            errors.password = "Use 8-20 chars with letters, numbers, and special characters.";
         }
         if (password !== confirmPassword && !!confirmPassword) {
-            errors.confirmPassword = "비밀번호가 일치하지 않습니다";
+            errors.confirmPassword = "Passwords do not match.";
         }
         if (!REGEX.name.test(name) && !!name) {
-            errors.name = "이름을 정확히 입력해 주세요.";
+            errors.name = "Enter a valid name.";
         }
         if (!REGEX.email.test(email) && !!email) {
-            errors.email = "올바른 이메일 형식이 아닙니다.";
+            errors.email = "Enter a valid email address.";
         }
 
         return errors;
-    }
+    };
+
+    useEffect(() => {
+        setInputErrors(validate(signUpData));
+    }, [signUpData]);
+
+    useEffect(() => {
+        const hasEmptyValue = Object.values(signUpData).some((value) => !value);
+        const hasError = Object.keys(inputErrors).length > 0;
+        setSignUpDisabled(hasEmptyValue || hasError);
+    }, [signUpData, inputErrors]);
 
     return (
         <div css={s.container}>
-            <div css={s.card}>
-                <h1 css={s.title}>회원가입</h1>
-                
+            <form css={s.card} onSubmit={handleSignUpSubmit}>
+                <h1 css={s.title}>Sign Up</h1>
+
                 <div css={s.linkContainer}>
-                    <span>이미 계정이 있으신가요? </span><Link to={"/auth/signin"}>로그인</Link>
+                    <span>Already have an account? </span>
+                    <Link to="/auth/signin">Sign in</Link>
                 </div>
-                
+
                 <div css={s.inputGroup}>
-                    <input type="text" name="username" placeholder="사용자이름" value={signUpData.username} onChange={handleInputChange} />
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="Username"
+                        value={signUpData.username}
+                        onChange={handleInputChange}
+                    />
                     <div css={s.errorMsg}>{inputErrors.username}</div>
                 </div>
-                
+
                 <div css={s.inputGroup}>
-                    <input type="password" name="password" placeholder="비밀번호" value={signUpData.password} onChange={handleInputChange} />
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        value={signUpData.password}
+                        onChange={handleInputChange}
+                    />
                     <div css={s.errorMsg}>{inputErrors.password}</div>
                 </div>
-                
+
                 <div css={s.inputGroup}>
-                    <input type="password" name="confirmPassword" placeholder="비밀번호 확인" value={signUpData.confirmPassword} onChange={handleInputChange} />
+                    <input
+                        type="password"
+                        name="confirmPassword"
+                        placeholder="Confirm password"
+                        value={signUpData.confirmPassword}
+                        onChange={handleInputChange}
+                    />
                     <div css={s.errorMsg}>{inputErrors.confirmPassword}</div>
                 </div>
-                
+
                 <div css={s.inputGroup}>
-                    <input type="text" name="name" placeholder="성명" value={signUpData.name} onChange={handleInputChange} />
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="Name"
+                        value={signUpData.name}
+                        onChange={handleInputChange}
+                    />
                     <div css={s.errorMsg}>{inputErrors.name}</div>
                 </div>
-                
+
                 <div css={s.inputGroup}>
-                    <input type="text" name="email" placeholder="이메일" value={signUpData.email} onChange={handleInputChange} />
+                    <input
+                        type="text"
+                        name="email"
+                        placeholder="Email"
+                        value={signUpData.email}
+                        onChange={handleInputChange}
+                    />
                     <div css={s.errorMsg}>{inputErrors.email}</div>
                 </div>
-                
-                <button css={s.button} disabled={signUpDisabled} onClick={handleSignUpOnClick}>회원가입</button>
-            </div>
+
+                <button css={s.button} type="submit" disabled={signUpDisabled || signUpMutation.isPending}>
+                    Sign Up
+                </button>
+            </form>
         </div>
-    )
+    );
 }
 
 export default SignUp;
