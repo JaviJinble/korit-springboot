@@ -40,12 +40,12 @@ public class PrioncipalUser implements UserDetails, OAuth2User {
 
     @Override
     public @Nullable String getPassword() {
-        return "";
+        return user == null ? "" : user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return user == null ? "" : user.getUsername();
     }
 
     @Override

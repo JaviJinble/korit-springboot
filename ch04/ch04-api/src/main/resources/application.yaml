@@ -2,6 +2,10 @@ spring:
   profiles:
     include: secret
 
+app:
+  oauth2:
+    redirect-uri: http://localhost:5173/oauth2/redirect
+
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: com.korit.ch04api.entity

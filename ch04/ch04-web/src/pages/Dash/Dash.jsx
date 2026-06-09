@@ -223,6 +223,9 @@ function Dash() {
                         <button type="button" onClick={() => navigate("/calendar")}>
                             캘린더
                         </button>
+                        <button type="button" onClick={() => navigate("/notes")}>
+                            메모장
+                        </button>
                         <button type="button" onClick={() => navigate("/mypage")}>
                             마이페이지
                         </button>
