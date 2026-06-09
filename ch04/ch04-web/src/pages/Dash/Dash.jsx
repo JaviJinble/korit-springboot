@@ -201,7 +201,7 @@ function Dash() {
                     <SummaryItem label="전체" value={totalCount} />
                     <SummaryItem label="완료" value={completedCount} />
                     <SummaryItem label="진행 중" value={activeCount} />
-                    <SummaryItem label="완료율" value={`${completionRate}%`} />
+                    <SummaryItem label="완료율" value={`${completionRate}%`} progress={completionRate} />
                 </div>
 
                 <section css={prioritySummaryPanel}>
@@ -373,11 +373,18 @@ function Dash() {
     );
 }
 
-function SummaryItem({ label, value }) {
+function SummaryItem({ label, value, progress }) {
+    const hasProgress = typeof progress === "number";
+
     return (
         <div>
             <strong>{value}</strong>
             <span>{label}</span>
+            {hasProgress && (
+                <div css={progressTrack} aria-label={`완료율 ${progress}%`}>
+                    <div css={progressFill(progress)} />
+                </div>
+            )}
         </div>
     );
 }
@@ -448,7 +455,7 @@ const summary = css`
     gap: 10px;
     margin-bottom: 10px;
 
-    div {
+    > div {
         padding: 14px;
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 10px;
@@ -469,6 +476,22 @@ const summary = css`
     @media (max-width: 720px) {
         grid-template-columns: repeat(2, 1fr);
     }
+`;
+
+const progressTrack = css`
+    width: 100%;
+    height: 7px;
+    margin-top: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.62);
+`;
+
+const progressFill = (progress) => css`
+    width: ${Math.max(0, Math.min(progress, 100))}%;
+    height: 100%;
+    background: #00a8ff;
+    transition: width 0.3s ease;
 `;
 
 const sectionTitle = css`
