@@ -54,6 +54,7 @@ function Dash() {
     const logoutMutation = useLogout();
     const [todoForm, setTodoForm] = useState(emptyTodoForm);
     const [filter, setFilter] = useState(FILTERS.ALL);
+    const [searchKeyword, setSearchKeyword] = useState("");
     const [editingTodoId, setEditingTodoId] = useState(null);
     const [editingTodoForm, setEditingTodoForm] = useState(emptyTodoForm);
 
@@ -110,14 +111,16 @@ function Dash() {
         .filter((todo) => todo.daysLeft >= 0 && todo.daysLeft <= 7)
         .sort((a, b) => a.daysLeft - b.daysLeft)
         .slice(0, 5);
+    const normalizedSearchKeyword = searchKeyword.trim().toLowerCase();
     const filteredTodos = todos.filter((todo) => {
-        if (filter === FILTERS.ACTIVE) {
-            return !todo.isCompleted;
-        }
-        if (filter === FILTERS.COMPLETED) {
-            return todo.isCompleted;
-        }
-        return true;
+        const matchesStatus =
+            filter === FILTERS.ALL ||
+            (filter === FILTERS.ACTIVE && !todo.isCompleted) ||
+            (filter === FILTERS.COMPLETED && todo.isCompleted);
+        const matchesSearch =
+            !normalizedSearchKeyword || todo.content.toLowerCase().includes(normalizedSearchKeyword);
+
+        return matchesStatus && matchesSearch;
     });
 
     const handleTodoFormChange = (e) => {
@@ -264,6 +267,15 @@ function Dash() {
                     </button>
                 </form>
 
+                <div css={searchBox}>
+                    <input
+                        type="search"
+                        placeholder="할 일을 검색하세요"
+                        value={searchKeyword}
+                        onChange={(e) => setSearchKeyword(e.target.value)}
+                    />
+                </div>
+
                 <div css={tabs}>
                     {Object.values(FILTERS).map((filterName) => (
                         <button
@@ -288,7 +300,7 @@ function Dash() {
                 )}
 
                 {!todosQuery.isLoading && !todosQuery.isError && todos.length > 0 && filteredTodos.length === 0 && (
-                    <p css={message}>선택한 상태의 할 일이 없습니다.</p>
+                    <p css={message}>검색 또는 필터 조건에 맞는 할 일이 없습니다.</p>
                 )}
 
                 {filteredTodos.length > 0 && (
@@ -614,7 +626,7 @@ const form = css`
     display: grid;
     grid-template-columns: minmax(0, 1fr) 160px 130px 88px;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
 
     input,
     select {
@@ -645,6 +657,30 @@ const form = css`
         button {
             height: 46px;
         }
+    }
+`;
+
+const searchBox = css`
+    margin-bottom: 12px;
+
+    input {
+        width: 100%;
+        min-width: 0;
+        padding: 13px 16px;
+        border: 1px solid rgba(0, 168, 255, 0.22);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.07);
+        color: #ffffff;
+        font-size: 1rem;
+    }
+
+    input::placeholder {
+        color: rgba(226, 232, 240, 0.46);
+    }
+
+    input:focus {
+        border-color: rgba(0, 168, 255, 0.7);
+        box-shadow: 0 0 0 3px rgba(0, 168, 255, 0.12);
     }
 `;
 
