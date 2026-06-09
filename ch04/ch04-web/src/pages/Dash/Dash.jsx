@@ -95,12 +95,13 @@ function Dash() {
         }),
         { HIGH: 0, MEDIUM: 0, LOW: 0 }
     );
-    const deadlineAlerts = todos
+    const upcomingTodos = todos
         .filter((todo) => !todo.isCompleted && !!todo.deadline)
         .map((todo) => ({
             ...todo,
             daysLeft: getDaysUntilDeadline(todo.deadline),
         }))
+        .filter((todo) => todo.daysLeft >= 0 && todo.daysLeft <= 7)
         .sort((a, b) => a.daysLeft - b.daysLeft)
         .slice(0, 5);
     const filteredTodos = todos.filter((todo) => {
@@ -215,26 +216,39 @@ function Dash() {
 
                     <div css={detailPanel}>
                         <div css={sectionTitle}>
-                            <strong>마감 알림</strong>
-                            <span>마감일이 가까운 항목</span>
+                            <strong>마감 요약</strong>
+                            <span>7일 이내 {upcomingTodos.length}개</span>
                         </div>
-                        {deadlineAlerts.length === 0 ? (
-                            <p css={message}>{totalCount === 0 ? "할 일을 추가하면 마감 알림이 표시됩니다." : "가까운 마감 일정이 없습니다."}</p>
-                        ) : (
-                            <ul css={alertList}>
-                                {deadlineAlerts.map((todo) => (
-                                    <li key={todo.id}>
-                                        <div>
-                                            <strong>{todo.content}</strong>
-                                            <span>{todo.deadline}</span>
-                                        </div>
-                                        <span css={ddayBadge(todo.daysLeft)}>{formatDday(todo.daysLeft)}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
+                        <p css={deadlineSummary}>
+                            완료되지 않았고 마감일이 있는 할 일 중 곧 다가오는 항목을 보여줍니다.
+                        </p>
                     </div>
                 </div>
+
+                <section css={upcomingPanel}>
+                    <div css={sectionTitle}>
+                        <strong>마감 임박 Todo</strong>
+                        <span>오늘 기준 7일 이내, 최대 5개</span>
+                    </div>
+                    {upcomingTodos.length === 0 ? (
+                        <p css={message}>7일 이내 마감 예정인 할 일이 없습니다.</p>
+                    ) : (
+                        <ul css={upcomingList}>
+                            {upcomingTodos.map((todo) => (
+                                <li key={todo.id}>
+                                    <div css={upcomingContent}>
+                                        <strong>{todo.content}</strong>
+                                        <div css={meta}>
+                                            <span>{todo.deadline}</span>
+                                            <span css={priorityBadge(todo.priority)}>{todo.priority || "MEDIUM"}</span>
+                                        </div>
+                                    </div>
+                                    <span css={ddayBadge(todo.daysLeft)}>{formatDday(todo.daysLeft)}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </section>
 
                 <form css={form} onSubmit={handleSubmit}>
                     <input
@@ -409,6 +423,11 @@ const header = css`
         color: #94a3b8;
         font-size: 0.95rem;
     }
+
+    @media (max-width: 720px) {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 `;
 
 const headerActions = css`
@@ -416,6 +435,7 @@ const headerActions = css`
     align-items: center;
     justify-content: flex-end;
     gap: 8px;
+    flex-wrap: wrap;
 
     button {
         height: 34px;
@@ -460,7 +480,7 @@ const dashboardDetails = css`
     display: grid;
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 
     @media (max-width: 720px) {
         grid-template-columns: 1fr;
@@ -489,6 +509,12 @@ const sectionTitle = css`
         color: #94a3b8;
         font-size: 0.82rem;
     }
+
+    @media (max-width: 520px) {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
 `;
 
 const priorityRows = css`
@@ -512,32 +538,50 @@ const priorityRows = css`
     }
 `;
 
-const alertList = css`
-    display: flex;
-    flex-direction: column;
+const deadlineSummary = css`
+    color: #cbd5e1;
+    font-size: 0.92rem;
+    line-height: 1.5;
+`;
+
+const upcomingPanel = css`
+    margin-bottom: 20px;
+    padding: 16px;
+    border: 1px solid rgba(0, 168, 255, 0.24);
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(0, 168, 255, 0.12), rgba(255, 255, 255, 0.05));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 14px 34px rgba(0, 168, 255, 0.08);
+`;
+
+const upcomingList = css`
+    display: grid;
     gap: 8px;
-    max-height: 178px;
-    overflow-y: auto;
-    padding-right: 4px;
     list-style: none;
 
     li {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         align-items: center;
-        gap: 10px;
-        padding: 10px;
+        gap: 12px;
+        padding: 12px;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 9px;
-        background: rgba(15, 23, 42, 0.4);
+        border-radius: 10px;
+        background: rgba(15, 23, 42, 0.48);
     }
 
-    div {
-        display: flex;
-        min-width: 0;
-        flex-direction: column;
-        gap: 3px;
+    @media (max-width: 560px) {
+        li {
+            align-items: flex-start;
+            grid-template-columns: 1fr;
+        }
     }
+`;
+
+const upcomingContent = css`
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 7px;
 
     strong {
         color: #ffffff;
@@ -546,9 +590,10 @@ const alertList = css`
         white-space: nowrap;
     }
 
-    span {
-        color: #94a3b8;
-        font-size: 0.82rem;
+    @media (max-width: 560px) {
+        strong {
+            white-space: normal;
+        }
     }
 `;
 
@@ -743,19 +788,14 @@ const priorityBadge = (priority) => {
 };
 
 const ddayBadge = (daysLeft) => {
-    const isOverdue = daysLeft < 0;
     const isToday = daysLeft === 0;
 
     return css`
         min-width: 58px;
         padding: 5px 9px;
         border-radius: 999px;
-        background: ${isOverdue
-            ? "rgba(255, 0, 85, 0.2)"
-            : isToday
-              ? "rgba(255, 255, 255, 0.14)"
-              : "rgba(0, 168, 255, 0.2)"};
-        color: ${isOverdue ? "#ff8ab3" : isToday ? "#ffffff" : "#7dd3fc"} !important;
+        background: ${isToday ? "rgba(255, 255, 255, 0.14)" : "rgba(0, 168, 255, 0.2)"};
+        color: ${isToday ? "#ffffff" : "#7dd3fc"} !important;
         font-size: 0.84rem !important;
         font-weight: 900;
         text-align: center;
