@@ -6,18 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NoteRespDto {
+public class AttachmentRespDto {
     private Long id;
-    private Long userId;
-    private String title;
-    private String content;
-    private List<AttachmentRespDto> attachments;
+    private Long noteId;
+    private String originalFileName;
+    private String contentType;
+    private Long fileSize;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

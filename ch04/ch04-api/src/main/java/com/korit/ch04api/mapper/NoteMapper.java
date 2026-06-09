@@ -10,6 +10,7 @@ import java.util.List;
 public interface NoteMapper {
     int insertNote(Note note);
     List<Note> selectNotesByUserId(@Param("userId") Long userId);
+    int existsNoteByIdAndUserId(@Param("noteId") Long noteId, @Param("userId") Long userId);
     int updateNote(
             @Param("noteId") Long noteId,
             @Param("userId") Long userId,

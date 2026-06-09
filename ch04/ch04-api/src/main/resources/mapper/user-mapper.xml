@@ -9,6 +9,7 @@
         <result property="password" column="password" />
         <result property="name" column="name" />
         <result property="email" column="email" />
+        <result property="bio" column="bio" />
         <result property="roleId" column="user_role_id" />
         <association property="role" resultMap="RoleResultMap" />
     </resultMap>
@@ -19,8 +20,10 @@
     </resultMap>
 
     <insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
-        insert into users values
-            (default, #{username}, #{password}, #{name}, #{email}, #{roleId})
+        insert into users
+            (username, password, name, email, role_id)
+        values
+            (#{username}, #{password}, #{name}, #{email}, #{roleId})
     </insert>
     <select id="selectByUsername" resultMap="UserResultMap">
         select
@@ -29,6 +32,7 @@
             u.password,
             u.name,
             u.email,
+            u.bio,
             u.role_id as user_role_id,
 
             r.id as role_id,
@@ -41,6 +45,26 @@
         order by
             u.id
     </select>
+    <select id="selectByEmailExceptUserId" resultMap="UserResultMap">
+        select
+            u.id as user_id,
+            u.username,
+            u.password,
+            u.name,
+            u.email,
+            u.bio,
+            u.role_id as user_role_id,
+
+            r.id as role_id,
+            r.role_name
+        from
+            users u
+            left join roles r on r.id = u.role_id
+        where
+            u.email = #{email}
+            and u.id != #{userId}
+        limit 1
+    </select>
     <select id="selectById" resultMap="UserResultMap">
         select
             u.id as user_id,
@@ -48,6 +72,7 @@
             u.password,
             u.name,
             u.email,
+            u.bio,
             u.role_id as user_role_id,
 
             r.id as role_id,
@@ -60,4 +85,13 @@
         order by
             u.id
     </select>
+    <update id="updateProfile">
+        update users
+        set
+            name = #{name},
+            email = #{email},
+            bio = #{bio}
+        where
+            id = #{userId}
+    </update>
 </mapper>

@@ -18,3 +18,8 @@ export const getUser = async () => {
     const response = await axiosInstance.get("/api/me");
     return response.data;
 };
+
+export const updateProfile = async ({ name, email, bio }) => {
+    const response = await axiosInstance.put("/api/me", { name, email, bio });
+    return response.data;
+};

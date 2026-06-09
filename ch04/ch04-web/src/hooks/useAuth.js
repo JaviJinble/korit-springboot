@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
-import { getUser, logout, signIn, signUp } from "../api/authApi";
+import { getUser, logout, signIn, signUp, updateProfile } from "../api/authApi";
 import { useAuthStore } from "../store/authStore";
 
 export function useSignUp() {
@@ -56,6 +56,21 @@ export function useLogout() {
             removeToken();
             queryClient.clear();
             navigate("/auth/signin", { replace: true });
+        },
+    });
+}
+
+export function useUpdateProfile() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: updateProfile,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["me"] });
+        },
+        onError: (error) => {
+            const message = error.response?.data?.body?.message ?? "프로필 수정 중 오류가 발생했습니다.";
+            alert(message);
         },
     });
 }
