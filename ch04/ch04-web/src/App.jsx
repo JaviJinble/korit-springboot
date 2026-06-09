@@ -8,6 +8,7 @@ import { globalStyles } from "./styles/global";
 import Dash from "./pages/Dash/Dash";
 import MyPage from "./pages/MyPage/MyPage";
 import OAuth2Redirect from "./pages/OAuth2Redirect/OAuth2Redirect";
+import Calendar from "./pages/Calendar/Calendar";
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
 
                     <Route element={<ProtectedRoutes />}>
                       <Route path="/dash" element={<Dash />} />
+                      <Route path="/calendar" element={<Calendar />} />
                       <Route path="/mypage" element={<MyPage />} />
                     </Route>
                 </Routes>

@@ -23,10 +23,23 @@ const FILTER_LABELS = {
     [FILTERS.COMPLETED]: "완료",
 };
 
+const SORTS = {
+    LATEST: "LATEST",
+    OLDEST: "OLDEST",
+    DEADLINE_ASC: "DEADLINE_ASC",
+    PRIORITY_DESC: "PRIORITY_DESC",
+};
+
 const PRIORITY_LABELS = {
     HIGH: "높음",
     MEDIUM: "보통",
     LOW: "낮음",
+};
+
+const PRIORITY_ORDER = {
+    HIGH: 3,
+    MEDIUM: 2,
+    LOW: 1,
 };
 
 const getDaysUntilDeadline = (deadline) => {
@@ -37,6 +50,9 @@ const getDaysUntilDeadline = (deadline) => {
     const diffTime = deadlineDate.getTime() - today.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
+
+const getTime = (dateValue) => (dateValue ? new Date(dateValue).getTime() : 0);
+const getDeadlineTime = (deadline) => (deadline ? new Date(`${deadline}T00:00:00`).getTime() : Number.MAX_SAFE_INTEGER);
 
 const formatDday = (daysLeft) => {
     if (daysLeft === 0) {
@@ -55,6 +71,7 @@ function Dash() {
     const [todoForm, setTodoForm] = useState(emptyTodoForm);
     const [filter, setFilter] = useState(FILTERS.ALL);
     const [searchKeyword, setSearchKeyword] = useState("");
+    const [sortType, setSortType] = useState(SORTS.LATEST);
     const [editingTodoId, setEditingTodoId] = useState(null);
     const [editingTodoForm, setEditingTodoForm] = useState(emptyTodoForm);
 
@@ -121,6 +138,18 @@ function Dash() {
             !normalizedSearchKeyword || todo.content.toLowerCase().includes(normalizedSearchKeyword);
 
         return matchesStatus && matchesSearch;
+    });
+    const sortedTodos = [...filteredTodos].sort((a, b) => {
+        if (sortType === SORTS.OLDEST) {
+            return getTime(a.createdAt) - getTime(b.createdAt);
+        }
+        if (sortType === SORTS.DEADLINE_ASC) {
+            return getDeadlineTime(a.deadline) - getDeadlineTime(b.deadline);
+        }
+        if (sortType === SORTS.PRIORITY_DESC) {
+            return (PRIORITY_ORDER[b.priority] ?? 2) - (PRIORITY_ORDER[a.priority] ?? 2);
+        }
+        return getTime(b.createdAt) - getTime(a.createdAt);
     });
 
     const handleTodoFormChange = (e) => {
@@ -191,6 +220,9 @@ function Dash() {
                     <h1>할 일 대시보드</h1>
                     <div css={headerActions}>
                         <span>{totalCount}개 항목</span>
+                        <button type="button" onClick={() => navigate("/calendar")}>
+                            캘린더
+                        </button>
                         <button type="button" onClick={() => navigate("/mypage")}>
                             마이페이지
                         </button>
@@ -267,13 +299,19 @@ function Dash() {
                     </button>
                 </form>
 
-                <div css={searchBox}>
+                <div css={tools}>
                     <input
                         type="search"
                         placeholder="할 일을 검색하세요"
                         value={searchKeyword}
                         onChange={(e) => setSearchKeyword(e.target.value)}
                     />
+                    <select value={sortType} onChange={(e) => setSortType(e.target.value)} aria-label="Todo 정렬">
+                        <option value={SORTS.LATEST}>최신순</option>
+                        <option value={SORTS.OLDEST}>오래된순</option>
+                        <option value={SORTS.DEADLINE_ASC}>마감일 빠른순</option>
+                        <option value={SORTS.PRIORITY_DESC}>우선순위 높은순</option>
+                    </select>
                 </div>
 
                 <div css={tabs}>
@@ -299,13 +337,13 @@ function Dash() {
                     </div>
                 )}
 
-                {!todosQuery.isLoading && !todosQuery.isError && todos.length > 0 && filteredTodos.length === 0 && (
+                {!todosQuery.isLoading && !todosQuery.isError && todos.length > 0 && sortedTodos.length === 0 && (
                     <p css={message}>검색 또는 필터 조건에 맞는 할 일이 없습니다.</p>
                 )}
 
-                {filteredTodos.length > 0 && (
+                {sortedTodos.length > 0 && (
                     <ul css={list}>
-                        {filteredTodos.map((todo) => (
+                        {sortedTodos.map((todo) => (
                             <li key={todo.id} css={item(todo.isCompleted)}>
                                 <button
                                     type="button"
@@ -660,10 +698,14 @@ const form = css`
     }
 `;
 
-const searchBox = css`
+const tools = css`
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px;
+    gap: 10px;
     margin-bottom: 12px;
 
-    input {
+    input,
+    select {
         width: 100%;
         min-width: 0;
         padding: 13px 16px;
@@ -678,9 +720,19 @@ const searchBox = css`
         color: rgba(226, 232, 240, 0.46);
     }
 
-    input:focus {
+    select option {
+        background: #0f172a;
+        color: #ffffff;
+    }
+
+    input:focus,
+    select:focus {
         border-color: rgba(0, 168, 255, 0.7);
         box-shadow: 0 0 0 3px rgba(0, 168, 255, 0.12);
+    }
+
+    @media (max-width: 720px) {
+        grid-template-columns: 1fr;
     }
 `;
 
