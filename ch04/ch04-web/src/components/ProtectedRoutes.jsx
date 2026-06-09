@@ -17,7 +17,7 @@ export function PublicOnlyRoute() {
     const isLoggedIn = !!accessToken;
 
     if (isLoggedIn) {
-        return <Navigate to={"/"} replace={true} />
+        return <Navigate to={"/dash"} replace={true} />
     }
     return <Outlet />
 }

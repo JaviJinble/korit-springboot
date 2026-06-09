@@ -29,7 +29,7 @@ export function useSignIn() {
         onSuccess: (data) => {
             saveToken(data.body.accessToken);
             queryClient.invalidateQueries();
-            navigate("/");
+            navigate("/dash");
         },
         onError: (error) => {
             const message = error.response.data.body.message;

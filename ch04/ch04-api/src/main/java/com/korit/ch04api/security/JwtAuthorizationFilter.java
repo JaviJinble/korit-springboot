@@ -35,6 +35,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 Long userId = Long.valueOf(claimsJws.getPayload().getSubject());
 
                 User foundUser = userMapper.selectById(userId);
+                if (foundUser == null) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
                 PrioncipalUser prioncipalUser = new PrioncipalUser(foundUser);
 
                 UsernamePasswordAuthenticationToken authenticationToken
