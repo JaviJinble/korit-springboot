@@ -23,6 +23,12 @@ const FILTER_LABELS = {
     [FILTERS.COMPLETED]: "완료",
 };
 
+const PRIORITY_LABELS = {
+    HIGH: "높음",
+    MEDIUM: "보통",
+    LOW: "낮음",
+};
+
 const getDaysUntilDeadline = (deadline) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -198,32 +204,21 @@ function Dash() {
                     <SummaryItem label="완료율" value={`${completionRate}%`} />
                 </div>
 
-                <div css={dashboardDetails}>
-                    <div css={detailPanel}>
-                        <div css={sectionTitle}>
-                            <strong>우선순위</strong>
-                            <span>우선순위별 집계</span>
-                        </div>
-                        <div css={priorityRows}>
-                            {["HIGH", "MEDIUM", "LOW"].map((priority) => (
-                                <div key={priority}>
-                                    <span css={priorityBadge(priority)}>{priority}</span>
-                                    <strong>{priorityCounts[priority]}</strong>
-                                </div>
-                            ))}
-                        </div>
+                <section css={prioritySummaryPanel}>
+                    <div css={sectionTitle}>
+                        <strong>우선순위별 Todo 요약</strong>
+                        <span>완료 여부와 상관없이 전체 Todo 기준</span>
                     </div>
-
-                    <div css={detailPanel}>
-                        <div css={sectionTitle}>
-                            <strong>마감 요약</strong>
-                            <span>7일 이내 {upcomingTodos.length}개</span>
-                        </div>
-                        <p css={deadlineSummary}>
-                            완료되지 않았고 마감일이 있는 할 일 중 곧 다가오는 항목을 보여줍니다.
-                        </p>
+                    <div css={prioritySummaryGrid}>
+                        {["HIGH", "MEDIUM", "LOW"].map((priority) => (
+                            <div key={priority}>
+                                <span css={priorityBadge(priority)}>{PRIORITY_LABELS[priority]}</span>
+                                <strong>{priorityCounts[priority]}</strong>
+                                <small>{priority} Todo</small>
+                            </div>
+                        ))}
                     </div>
-                </div>
+                </section>
 
                 <section css={upcomingPanel}>
                     <div css={sectionTitle}>
@@ -240,7 +235,7 @@ function Dash() {
                                         <strong>{todo.content}</strong>
                                         <div css={meta}>
                                             <span>{todo.deadline}</span>
-                                            <span css={priorityBadge(todo.priority)}>{todo.priority || "MEDIUM"}</span>
+                                            <span css={priorityBadge(todo.priority)}>{PRIORITY_LABELS[todo.priority] || "보통"}</span>
                                         </div>
                                     </div>
                                     <span css={ddayBadge(todo.daysLeft)}>{formatDday(todo.daysLeft)}</span>
@@ -351,7 +346,7 @@ function Dash() {
                                             <span css={contentText(todo.isCompleted)}>{todo.content}</span>
                                             <div css={meta}>
                                                 <span>{todo.deadline || "기한 없음"}</span>
-                                                <span css={priorityBadge(todo.priority)}>{todo.priority || "MEDIUM"}</span>
+                                                <span css={priorityBadge(todo.priority)}>{PRIORITY_LABELS[todo.priority] || "보통"}</span>
                                                 <span>{todo.isCompleted ? "완료" : "진행 중"}</span>
                                             </div>
                                         </div>
@@ -476,24 +471,6 @@ const summary = css`
     }
 `;
 
-const dashboardDetails = css`
-    display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: 10px;
-    margin-bottom: 10px;
-
-    @media (max-width: 720px) {
-        grid-template-columns: 1fr;
-    }
-`;
-
-const detailPanel = css`
-    padding: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.05);
-`;
-
 const sectionTitle = css`
     display: flex;
     align-items: flex-end;
@@ -517,31 +494,44 @@ const sectionTitle = css`
     }
 `;
 
-const priorityRows = css`
+const prioritySummaryPanel = css`
+    margin-bottom: 10px;
+    padding: 16px;
+    border: 1px solid rgba(0, 168, 255, 0.2);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+`;
+
+const prioritySummaryGrid = css`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 10px;
 
     div {
         display: flex;
         min-width: 0;
         flex-direction: column;
         gap: 8px;
-        padding: 10px;
-        border-radius: 9px;
-        background: rgba(255, 255, 255, 0.05);
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        background: rgba(15, 23, 42, 0.42);
     }
 
     strong {
         color: #ffffff;
-        font-size: 1.2rem;
+        font-size: 1.45rem;
     }
-`;
 
-const deadlineSummary = css`
-    color: #cbd5e1;
-    font-size: 0.92rem;
-    line-height: 1.5;
+    small {
+        color: #94a3b8;
+        font-size: 0.78rem;
+    }
+
+    @media (max-width: 560px) {
+        grid-template-columns: 1fr;
+    }
 `;
 
 const upcomingPanel = css`
