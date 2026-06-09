@@ -7,6 +7,7 @@ import DeepSpaceLayout from "./components/DeepSpaceLayout/DeepSpaceLayout";
 import { globalStyles } from "./styles/global";
 import Dash from "./pages/Dash/Dash";
 import MyPage from "./pages/MyPage/MyPage";
+import OAuth2Redirect from "./pages/OAuth2Redirect/OAuth2Redirect";
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
             <DeepSpaceLayout>
                 <Routes>
                     <Route path="/" element={<></>} />
+                    <Route path="/oauth2/redirect" element={<OAuth2Redirect />} />
 
                     <Route element={<PublicOnlyRoute />}>
                       <Route path="/auth/signup" element={<SignUp />} />

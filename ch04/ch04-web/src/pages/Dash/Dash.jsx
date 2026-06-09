@@ -17,6 +17,12 @@ const FILTERS = {
     COMPLETED: "COMPLETED",
 };
 
+const FILTER_LABELS = {
+    [FILTERS.ALL]: "전체",
+    [FILTERS.ACTIVE]: "진행 중",
+    [FILTERS.COMPLETED]: "완료",
+};
+
 const getDaysUntilDeadline = (deadline) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -162,7 +168,7 @@ function Dash() {
     };
 
     const handleDelete = async (todoId) => {
-        if (!window.confirm("Delete this todo?")) {
+        if (!window.confirm("해당 할 일을 삭제할까요?")) {
             return;
         }
         await deleteTodoMutation.mutateAsync(todoId);
@@ -172,30 +178,30 @@ function Dash() {
         <main css={container}>
             <section css={panel}>
                 <div css={header}>
-                    <h1>Todo</h1>
+                    <h1>할 일 대시보드</h1>
                     <div css={headerActions}>
-                        <span>{totalCount} items</span>
+                        <span>{totalCount}개 항목</span>
                         <button type="button" onClick={() => navigate("/mypage")}>
-                            My Page
+                            마이페이지
                         </button>
                         <button type="button" onClick={() => logoutMutation.mutate()} disabled={logoutMutation.isPending}>
-                            Logout
+                            로그아웃
                         </button>
                     </div>
                 </div>
 
                 <div css={summary}>
-                    <SummaryItem label="Total" value={totalCount} />
-                    <SummaryItem label="Completed" value={completedCount} />
-                    <SummaryItem label="Active" value={activeCount} />
-                    <SummaryItem label="Rate" value={`${completionRate}%`} />
+                    <SummaryItem label="전체" value={totalCount} />
+                    <SummaryItem label="완료" value={completedCount} />
+                    <SummaryItem label="진행 중" value={activeCount} />
+                    <SummaryItem label="완료율" value={`${completionRate}%`} />
                 </div>
 
                 <div css={dashboardDetails}>
                     <div css={detailPanel}>
                         <div css={sectionTitle}>
-                            <strong>Priority</strong>
-                            <span>By priority</span>
+                            <strong>우선순위</strong>
+                            <span>우선순위별 집계</span>
                         </div>
                         <div css={priorityRows}>
                             {["HIGH", "MEDIUM", "LOW"].map((priority) => (
@@ -209,11 +215,11 @@ function Dash() {
 
                     <div css={detailPanel}>
                         <div css={sectionTitle}>
-                            <strong>Deadline Alert</strong>
-                            <span>Upcoming todos</span>
+                            <strong>마감 알림</strong>
+                            <span>마감일이 가까운 항목</span>
                         </div>
                         {deadlineAlerts.length === 0 ? (
-                            <p css={message}>{totalCount === 0 ? "Add a todo to see deadline alerts." : "No upcoming deadlines."}</p>
+                            <p css={message}>{totalCount === 0 ? "할 일을 추가하면 마감 알림이 표시됩니다." : "가까운 마감 일정이 없습니다."}</p>
                         ) : (
                             <ul css={alertList}>
                                 {deadlineAlerts.map((todo) => (
@@ -234,7 +240,7 @@ function Dash() {
                     <input
                         type="text"
                         name="content"
-                        placeholder="Add a todo"
+                        placeholder="할 일을 입력하세요"
                         value={todoForm.content}
                         onChange={handleTodoFormChange}
                     />
@@ -245,7 +251,7 @@ function Dash() {
                         <option value="LOW">LOW</option>
                     </select>
                     <button type="submit" disabled={addTodoMutation.isPending}>
-                        Add
+                        추가
                     </button>
                 </form>
 
@@ -257,23 +263,23 @@ function Dash() {
                             css={tabButton(filter === filterName)}
                             onClick={() => setFilter(filterName)}
                         >
-                            {filterName}
+                            {FILTER_LABELS[filterName]}
                         </button>
                     ))}
                 </div>
 
-                {todosQuery.isLoading && <p css={message}>Loading...</p>}
-                {todosQuery.isError && <p css={message}>Could not load todos.</p>}
+                {todosQuery.isLoading && <p css={message}>불러오는 중...</p>}
+                {todosQuery.isError && <p css={message}>할 일 목록을 불러오지 못했습니다.</p>}
 
                 {!todosQuery.isLoading && !todosQuery.isError && todos.length === 0 && (
                     <div css={emptyState}>
-                        <strong>No todos yet.</strong>
-                        <span>Add your first task for today.</span>
+                        <strong>아직 등록된 할 일이 없습니다.</strong>
+                        <span>오늘의 첫 할 일을 추가해 보세요.</span>
                     </div>
                 )}
 
                 {!todosQuery.isLoading && !todosQuery.isError && todos.length > 0 && filteredTodos.length === 0 && (
-                    <p css={message}>No todos match this filter.</p>
+                    <p css={message}>선택한 상태의 할 일이 없습니다.</p>
                 )}
 
                 {filteredTodos.length > 0 && (
@@ -285,7 +291,7 @@ function Dash() {
                                     css={checkButton(todo.isCompleted)}
                                     onClick={() => toggleTodoMutation.mutate(todo.id)}
                                     disabled={toggleTodoMutation.isPending}
-                                    aria-label="Toggle todo status"
+                                    aria-label="완료 상태 변경"
                                 >
                                     {todo.isCompleted ? "✓" : ""}
                                 </button>
@@ -318,10 +324,10 @@ function Dash() {
                                                 onClick={() => handleEditSave(todo.id)}
                                                 disabled={updateTodoMutation.isPending}
                                             >
-                                                Save
+                                                저장
                                             </button>
                                             <button type="button" onClick={handleEditCancel}>
-                                                Cancel
+                                                취소
                                             </button>
                                         </div>
                                     </div>
@@ -330,21 +336,21 @@ function Dash() {
                                         <div css={todoBody}>
                                             <span css={contentText(todo.isCompleted)}>{todo.content}</span>
                                             <div css={meta}>
-                                                <span>{todo.deadline || "No deadline"}</span>
+                                                <span>{todo.deadline || "기한 없음"}</span>
                                                 <span css={priorityBadge(todo.priority)}>{todo.priority || "MEDIUM"}</span>
-                                                <span>{todo.isCompleted ? "Completed" : "Active"}</span>
+                                                <span>{todo.isCompleted ? "완료" : "진행 중"}</span>
                                             </div>
                                         </div>
                                         <div css={actions}>
                                             <button type="button" onClick={() => handleEditStart(todo)}>
-                                                Edit
+                                                수정
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => handleDelete(todo.id)}
                                                 disabled={deleteTodoMutation.isPending}
                                             >
-                                                Delete
+                                                삭제
                                             </button>
                                         </div>
                                     </>

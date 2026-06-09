@@ -12,29 +12,29 @@ function MyPage() {
         <main css={container}>
             <section css={panel}>
                 <div css={header}>
-                    <h1>My Page</h1>
-                    <span>Account</span>
+                    <h1>마이페이지</h1>
+                    <span>계정 정보</span>
                 </div>
 
                 {meQuery.isLoading && <p css={message}>불러오는 중...</p>}
-                {meQuery.isError && <p css={message}>내 정보를 불러오지 못했습니다.</p>}
+                {meQuery.isError && <p css={message}>사용자 정보를 불러오지 못했습니다.</p>}
 
                 {!!user && (
                     <div css={infoList}>
                         <div>
-                            <span>username</span>
+                            <span>사용자명</span>
                             <strong>{user.username}</strong>
                         </div>
                         <div>
-                            <span>name</span>
+                            <span>이름</span>
                             <strong>{user.name}</strong>
                         </div>
                         <div>
-                            <span>email</span>
+                            <span>이메일</span>
                             <strong>{user.email}</strong>
                         </div>
                         <div>
-                            <span>role</span>
+                            <span>권한</span>
                             <strong>{user.role}</strong>
                         </div>
                     </div>
@@ -42,7 +42,7 @@ function MyPage() {
 
                 <div css={actions}>
                     <button type="button" onClick={() => navigate("/dash")}>
-                        Todo로 이동
+                        할 일로 이동
                     </button>
                     <button type="button" onClick={() => logoutMutation.mutate()} disabled={logoutMutation.isPending}>
                         로그아웃

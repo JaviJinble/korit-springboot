@@ -41,19 +41,19 @@ function SignUp() {
         const errors = {};
 
         if (!REGEX.username.test(username) && !!username) {
-            errors.username = "Start with a lowercase letter, 4-20 chars, lowercase letters/numbers/_ only.";
+            errors.username = "영문 소문자로 시작하고 4~20자로 입력해 주세요. 숫자와 _는 사용할 수 있습니다.";
         }
         if (!REGEX.password.test(password) && !!password) {
-            errors.password = "Use 8-20 chars with letters, numbers, and special characters.";
+            errors.password = "영문, 숫자, 특수문자를 포함해 8~20자로 입력해 주세요.";
         }
         if (password !== confirmPassword && !!confirmPassword) {
-            errors.confirmPassword = "Passwords do not match.";
+            errors.confirmPassword = "비밀번호가 서로 일치하지 않습니다.";
         }
         if (!REGEX.name.test(name) && !!name) {
-            errors.name = "Enter a valid name.";
+            errors.name = "이름을 정확히 입력해 주세요.";
         }
         if (!REGEX.email.test(email) && !!email) {
-            errors.email = "Enter a valid email address.";
+            errors.email = "올바른 이메일 형식으로 입력해 주세요.";
         }
 
         return errors;
@@ -72,18 +72,18 @@ function SignUp() {
     return (
         <div css={s.container}>
             <form css={s.card} onSubmit={handleSignUpSubmit}>
-                <h1 css={s.title}>Sign Up</h1>
+                <h1 css={s.title}>회원가입</h1>
 
                 <div css={s.linkContainer}>
-                    <span>Already have an account? </span>
-                    <Link to="/auth/signin">Sign in</Link>
+                    <span>이미 계정이 있으신가요? </span>
+                    <Link to="/auth/signin">로그인</Link>
                 </div>
 
                 <div css={s.inputGroup}>
                     <input
                         type="text"
                         name="username"
-                        placeholder="Username"
+                        placeholder="사용자명"
                         value={signUpData.username}
                         onChange={handleInputChange}
                     />
@@ -94,7 +94,7 @@ function SignUp() {
                     <input
                         type="password"
                         name="password"
-                        placeholder="Password"
+                        placeholder="비밀번호"
                         value={signUpData.password}
                         onChange={handleInputChange}
                     />
@@ -105,7 +105,7 @@ function SignUp() {
                     <input
                         type="password"
                         name="confirmPassword"
-                        placeholder="Confirm password"
+                        placeholder="비밀번호 확인"
                         value={signUpData.confirmPassword}
                         onChange={handleInputChange}
                     />
@@ -116,7 +116,7 @@ function SignUp() {
                     <input
                         type="text"
                         name="name"
-                        placeholder="Name"
+                        placeholder="이름"
                         value={signUpData.name}
                         onChange={handleInputChange}
                     />
@@ -127,7 +127,7 @@ function SignUp() {
                     <input
                         type="text"
                         name="email"
-                        placeholder="Email"
+                        placeholder="이메일"
                         value={signUpData.email}
                         onChange={handleInputChange}
                     />
@@ -135,7 +135,7 @@ function SignUp() {
                 </div>
 
                 <button css={s.button} type="submit" disabled={signUpDisabled || signUpMutation.isPending}>
-                    Sign Up
+                    회원가입
                 </button>
             </form>
         </div>
