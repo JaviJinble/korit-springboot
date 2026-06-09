@@ -46,4 +46,21 @@
             and user_id = #{userId}
     </update>
 
+    <update id="updateTodoContent">
+        update todo_tb
+        set
+            content = #{content},
+            updated_at = now()
+        where
+            todo_id = #{todoId}
+            and user_id = #{userId}
+    </update>
+
+    <delete id="deleteTodo">
+        delete from todo_tb
+        where
+            todo_id = #{todoId}
+            and user_id = #{userId}
+    </delete>
+
 </mapper>

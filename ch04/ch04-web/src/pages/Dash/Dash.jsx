@@ -1,11 +1,13 @@
 import { css } from "@emotion/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { addTodo, getTodos, toggleTodo } from "../../api/todoApi";
+import { addTodo, deleteTodo, getTodos, toggleTodo, updateTodo } from "../../api/todoApi";
 
 function Dash() {
     const queryClient = useQueryClient();
     const [content, setContent] = useState("");
+    const [editingTodoId, setEditingTodoId] = useState(null);
+    const [editingContent, setEditingContent] = useState("");
 
     const todosQuery = useQuery({
         queryKey: ["todos"],
@@ -27,6 +29,22 @@ function Dash() {
         },
     });
 
+    const updateTodoMutation = useMutation({
+        mutationFn: updateTodo,
+        onSuccess: () => {
+            setEditingTodoId(null);
+            setEditingContent("");
+            queryClient.invalidateQueries({ queryKey: ["todos"] });
+        },
+    });
+
+    const deleteTodoMutation = useMutation({
+        mutationFn: deleteTodo,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["todos"] });
+        },
+    });
+
     const todos = todosQuery.data?.body ?? [];
 
     const handleSubmit = async (e) => {
@@ -40,6 +58,31 @@ function Dash() {
 
     const handleToggle = async (todoId) => {
         await toggleTodoMutation.mutateAsync(todoId);
+    };
+
+    const handleEditStart = (todo) => {
+        setEditingTodoId(todo.id);
+        setEditingContent(todo.content);
+    };
+
+    const handleEditCancel = () => {
+        setEditingTodoId(null);
+        setEditingContent("");
+    };
+
+    const handleEditSave = async (todoId) => {
+        const trimmedContent = editingContent.trim();
+        if (!trimmedContent) {
+            return;
+        }
+        await updateTodoMutation.mutateAsync({ todoId, content: trimmedContent });
+    };
+
+    const handleDelete = async (todoId) => {
+        if (!window.confirm("Todo를 삭제할까요?")) {
+            return;
+        }
+        await deleteTodoMutation.mutateAsync(todoId);
     };
 
     return (
@@ -77,7 +120,43 @@ function Dash() {
                             >
                                 {todo.isCompleted ? "✓" : ""}
                             </button>
-                            <span>{todo.content}</span>
+                            {editingTodoId === todo.id ? (
+                                <div css={editArea}>
+                                    <input
+                                        type="text"
+                                        value={editingContent}
+                                        onChange={(e) => setEditingContent(e.target.value)}
+                                    />
+                                    <div css={actions}>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleEditSave(todo.id)}
+                                            disabled={updateTodoMutation.isPending}
+                                        >
+                                            저장
+                                        </button>
+                                        <button type="button" onClick={handleEditCancel}>
+                                            취소
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <span>{todo.content}</span>
+                                    <div css={actions}>
+                                        <button type="button" onClick={() => handleEditStart(todo)}>
+                                            수정
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleDelete(todo.id)}
+                                            disabled={deleteTodoMutation.isPending}
+                                        >
+                                            삭제
+                                        </button>
+                                    </div>
+                                </>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -168,7 +247,7 @@ const list = css`
 
 const item = (isCompleted) => css`
     display: grid;
-    grid-template-columns: 34px 1fr;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
     align-items: center;
     gap: 12px;
     min-height: 48px;
@@ -193,6 +272,47 @@ const checkButton = (isCompleted) => css`
     color: #052e16;
     font-size: 1rem;
     font-weight: 800;
+`;
+
+const editArea = css`
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-column: span 2;
+    gap: 10px;
+
+    input {
+        min-width: 0;
+        padding: 10px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+    }
+`;
+
+const actions = css`
+    display: flex;
+    gap: 8px;
+
+    button {
+        min-width: 52px;
+        height: 34px;
+        padding: 0 10px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #e2e8f0;
+        font-size: 0.88rem;
+        font-weight: 700;
+    }
+
+    button:hover:not(:disabled) {
+        background: rgba(0, 168, 255, 0.35);
+    }
+
+    button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
 `;
 
 export default Dash;

@@ -41,6 +41,16 @@ public class TodoService {
         todoMapper.toggleTodoStatus(todoId, userId);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void updateTodo(Long userId, Long todoId, TodoReqDto reqDto) {
+        todoMapper.updateTodoContent(todoId, userId, reqDto.getContent());
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteTodo(Long userId, Long todoId) {
+        todoMapper.deleteTodo(todoId, userId);
+    }
+
     private TodoRespDto toRespDto(Todo todo) {
         return TodoRespDto.builder()
                 .id(todo.getId())
