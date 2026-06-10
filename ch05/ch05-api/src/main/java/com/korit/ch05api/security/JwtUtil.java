@@ -43,6 +43,7 @@ public class JwtUtil {
                 .compact();
     }
 
+    // 역할 파악하기
     public Jws<Claims> parseAndValidate(String jwt) {
         return Jwts.parser()
                 .verifyWith(key)
