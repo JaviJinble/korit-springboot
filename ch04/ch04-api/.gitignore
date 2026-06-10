@@ -1,4 +1,6 @@
 application-secret.yaml
+application-security.yaml
+uploads/
 
 HELP.md
 .gradle
