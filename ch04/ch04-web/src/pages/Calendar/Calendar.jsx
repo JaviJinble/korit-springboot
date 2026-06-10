@@ -50,7 +50,7 @@ function Calendar() {
         queryFn: getTodos,
     });
 
-    const todos = todosQuery.data?.body ?? [];
+    const todos = useMemo(() => todosQuery.data?.body ?? [], [todosQuery.data]);
     const todosByDeadline = useMemo(
         () =>
             todos.reduce((groups, todo) => {

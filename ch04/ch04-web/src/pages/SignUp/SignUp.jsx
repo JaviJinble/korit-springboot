@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import { useSignUp } from "../../hooks/useAuth";
 import * as s from "../styles";
 
 const REGEX = {
-    username: /^[a-z][a-z0-9_]{3,19}$/,
-    password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/,
-    name: /^([a-zA-Z\s]{2,30}|[가-힣]{2,10})$/,
+    username: /^[a-z0-9_-]{4,12}$/,
+    password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/,
+    name: /^([가-힣]{2,5}|[a-zA-Z]{2,20}(?: [a-zA-Z]{2,20})*)$/,
     email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
 };
 
@@ -18,11 +18,34 @@ const emptyInputs = {
     email: "",
 };
 
+const validate = ({ username, password, confirmPassword, name, email }) => {
+    const errors = {};
+
+    if (!REGEX.username.test(username) && username) {
+        errors.username = "4~12자의 영문 소문자, 숫자, -, _만 사용할 수 있습니다.";
+    }
+    if (!REGEX.password.test(password) && password) {
+        errors.password = "영문, 숫자, 특수문자를 포함해 8~20자로 입력해 주세요.";
+    }
+    if (password !== confirmPassword && confirmPassword) {
+        errors.confirmPassword = "비밀번호가 서로 일치하지 않습니다.";
+    }
+    if (!REGEX.name.test(name) && name) {
+        errors.name = "이름을 정확히 입력해 주세요.";
+    }
+    if (!REGEX.email.test(email) && email) {
+        errors.email = "올바른 이메일 형식으로 입력해 주세요.";
+    }
+
+    return errors;
+};
+
 function SignUp() {
     const [signUpData, setSignUpData] = useState(emptyInputs);
-    const [inputErrors, setInputErrors] = useState({});
-    const [signUpDisabled, setSignUpDisabled] = useState(true);
     const signUpMutation = useSignUp();
+    const inputErrors = validate(signUpData);
+    const hasEmptyValue = Object.values(signUpData).some((value) => !value);
+    const signUpDisabled = hasEmptyValue || Object.keys(inputErrors).length > 0;
 
     const handleInputChange = (e) => {
         setSignUpData((prev) => ({
@@ -36,38 +59,6 @@ function SignUp() {
         await signUpMutation.mutateAsync(signUpData);
         setSignUpData(emptyInputs);
     };
-
-    const validate = ({ username, password, confirmPassword, name, email }) => {
-        const errors = {};
-
-        if (!REGEX.username.test(username) && !!username) {
-            errors.username = "영문 소문자로 시작하고 4~20자로 입력해 주세요. 숫자와 _는 사용할 수 있습니다.";
-        }
-        if (!REGEX.password.test(password) && !!password) {
-            errors.password = "영문, 숫자, 특수문자를 포함해 8~20자로 입력해 주세요.";
-        }
-        if (password !== confirmPassword && !!confirmPassword) {
-            errors.confirmPassword = "비밀번호가 서로 일치하지 않습니다.";
-        }
-        if (!REGEX.name.test(name) && !!name) {
-            errors.name = "이름을 정확히 입력해 주세요.";
-        }
-        if (!REGEX.email.test(email) && !!email) {
-            errors.email = "올바른 이메일 형식으로 입력해 주세요.";
-        }
-
-        return errors;
-    };
-
-    useEffect(() => {
-        setInputErrors(validate(signUpData));
-    }, [signUpData]);
-
-    useEffect(() => {
-        const hasEmptyValue = Object.values(signUpData).some((value) => !value);
-        const hasError = Object.keys(inputErrors).length > 0;
-        setSignUpDisabled(hasEmptyValue || hasError);
-    }, [signUpData, inputErrors]);
 
     return (
         <div css={s.container}>

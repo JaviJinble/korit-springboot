@@ -55,6 +55,7 @@ function Notes() {
     const [editingNoteForm, setEditingNoteForm] = useState(emptyNoteForm);
     const [attachmentModalNote, setAttachmentModalNote] = useState(null);
     const [previewAttachment, setPreviewAttachment] = useState(null);
+    const [notice, setNotice] = useState("");
 
     const notesQuery = useQuery({
         queryKey: ["notes"],
@@ -63,6 +64,7 @@ function Notes() {
 
     const addNoteMutation = useMutation({
         mutationFn: addNote,
+        onError: () => setNotice("메모를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요."),
     });
 
     const updateNoteMutation = useMutation({
@@ -72,11 +74,13 @@ function Notes() {
             setEditingNoteForm(emptyNoteForm);
             queryClient.invalidateQueries({ queryKey: ["notes"] });
         },
+        onError: () => setNotice("메모를 수정하지 못했습니다. 잠시 후 다시 시도해 주세요."),
     });
 
     const deleteNoteMutation = useMutation({
         mutationFn: deleteNote,
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notes"] }),
+        onError: () => setNotice("메모를 삭제하지 못했습니다. 잠시 후 다시 시도해 주세요."),
     });
 
     const uploadAttachmentMutation = useMutation({
@@ -134,7 +138,7 @@ function Notes() {
             }
 
             if (failedCount > 0) {
-                alert(`메모는 저장됐지만 ${failedCount}개 첨부파일 업로드에 실패했습니다.`);
+                setNotice(`메모는 저장됐지만 ${failedCount}개 첨부파일 업로드에 실패했습니다.`);
             }
         } else {
             queryClient.invalidateQueries({ queryKey: ["notes"] });
@@ -193,7 +197,7 @@ function Notes() {
         }
 
         if (failedCount > 0) {
-            alert(`${failedCount}개 파일 업로드에 실패했습니다.`);
+            setNotice(`${failedCount}개 파일 업로드에 실패했습니다.`);
         }
         e.target.value = "";
     };
@@ -210,7 +214,7 @@ function Notes() {
             link.remove();
             window.URL.revokeObjectURL(url);
         } catch {
-            alert("첨부파일 다운로드에 실패했습니다.");
+            setNotice("첨부파일 다운로드에 실패했습니다.");
         }
     };
 
@@ -222,7 +226,7 @@ function Notes() {
         try {
             await deleteAttachmentMutation.mutateAsync(attachmentId);
         } catch {
-            alert("첨부파일 삭제에 실패했습니다.");
+            setNotice("첨부파일 삭제에 실패했습니다.");
         }
     };
 
@@ -261,6 +265,15 @@ function Notes() {
                         </button>
                     )}
                 </div>
+
+                {notice && (
+                    <div css={noticeBox} role="status">
+                        <span>{notice}</span>
+                        <button type="button" onClick={() => setNotice("")}>
+                            닫기
+                        </button>
+                    </div>
+                )}
 
                 {isComposerOpen && (
                     <form css={composerCard} onSubmit={handleSubmit}>
@@ -487,7 +500,6 @@ function AttachmentItem({ attachment, onDownload, onDelete, onPreview, isBusy })
         let isMounted = true;
 
         if (!shouldShowPreview) {
-            setPreviewUrl("");
             return undefined;
         }
 
@@ -1413,6 +1425,28 @@ const message = css`
     padding: 24px 0;
     color: #cbd5e1;
     text-align: center;
+`;
+
+const noticeBox = css`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border: 1px solid rgba(248, 113, 113, 0.32);
+    border-radius: 10px;
+    background: rgba(127, 29, 29, 0.24);
+    color: #fecaca;
+
+    button {
+        height: 30px;
+        padding: 0 10px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        font-weight: 800;
+    }
 `;
 
 const emptyState = css`

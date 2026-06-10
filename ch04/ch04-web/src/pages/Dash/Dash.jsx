@@ -74,6 +74,7 @@ function Dash() {
     const [sortType, setSortType] = useState(SORTS.LATEST);
     const [editingTodoId, setEditingTodoId] = useState(null);
     const [editingTodoForm, setEditingTodoForm] = useState(emptyTodoForm);
+    const [notice, setNotice] = useState("");
 
     const todosQuery = useQuery({
         queryKey: ["todos"],
@@ -86,11 +87,13 @@ function Dash() {
             setTodoForm(emptyTodoForm);
             queryClient.invalidateQueries({ queryKey: ["todos"] });
         },
+        onError: () => setNotice("할 일을 추가하지 못했습니다. 잠시 후 다시 시도해 주세요."),
     });
 
     const toggleTodoMutation = useMutation({
         mutationFn: toggleTodo,
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["todos"] }),
+        onError: () => setNotice("완료 상태를 변경하지 못했습니다. 잠시 후 다시 시도해 주세요."),
     });
 
     const updateTodoMutation = useMutation({
@@ -100,11 +103,13 @@ function Dash() {
             setEditingTodoForm(emptyTodoForm);
             queryClient.invalidateQueries({ queryKey: ["todos"] });
         },
+        onError: () => setNotice("할 일을 수정하지 못했습니다. 잠시 후 다시 시도해 주세요."),
     });
 
     const deleteTodoMutation = useMutation({
         mutationFn: deleteTodo,
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["todos"] }),
+        onError: () => setNotice("할 일을 삭제하지 못했습니다. 잠시 후 다시 시도해 주세요."),
     });
 
     const todos = todosQuery.data?.body ?? [];
@@ -282,6 +287,15 @@ function Dash() {
                         </ul>
                     )}
                 </section>
+
+                {notice && (
+                    <div css={noticeBox} role="status">
+                        <span>{notice}</span>
+                        <button type="button" onClick={() => setNotice("")}>
+                            닫기
+                        </button>
+                    </div>
+                )}
 
                 <form css={form} onSubmit={handleSubmit}>
                     <input
@@ -759,6 +773,28 @@ const message = css`
     padding: 18px 0;
     color: #cbd5e1;
     text-align: center;
+`;
+
+const noticeBox = css`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border: 1px solid rgba(248, 113, 113, 0.32);
+    border-radius: 10px;
+    background: rgba(127, 29, 29, 0.24);
+    color: #fecaca;
+
+    button {
+        height: 30px;
+        padding: 0 10px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        font-weight: 800;
+    }
 `;
 
 const emptyState = css`

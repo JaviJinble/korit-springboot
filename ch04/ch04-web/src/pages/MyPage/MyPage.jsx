@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { getNotes } from "../../api/noteApi";
 import { getTodos } from "../../api/todoApi";
@@ -33,18 +33,6 @@ function MyPage() {
     const activeTodoCount = totalTodoCount - completedTodoCount;
     const [isEditing, setIsEditing] = useState(false);
     const [profileForm, setProfileForm] = useState(emptyProfileForm);
-
-    useEffect(() => {
-        if (!user) {
-            return;
-        }
-
-        setProfileForm({
-            name: user.name ?? "",
-            email: user.email ?? "",
-            bio: user.bio ?? "",
-        });
-    }, [user]);
 
     const handleProfileFormChange = (e) => {
         setProfileForm((prev) => ({

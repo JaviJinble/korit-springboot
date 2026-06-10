@@ -1,6 +1,6 @@
 import { css, keyframes } from "@emotion/react";
 
-const generateStars = (count, size) => {
+const generateStars = (count) => {
     let stars = [];
     for (let i = 0; i < count; i++) {
         const x = Math.floor(Math.random() * 2000);
