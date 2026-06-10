@@ -5,10 +5,10 @@
 <mapper namespace="com.korit.ch05api.mapper.UserMapper">
     <resultMap id="UserResultMap" type="User">
         <id property="id" column="user_id" />
-        <result property="username" column="username" />
-        <result property="password" column="password" />
-        <result property="name" column="name" />
         <result property="email" column="email" />
+        <result property="name" column="name" />
+        <result property="provider" column="provider" />
+        <result property="providerId" column="provider_id" />
         <result property="roleId" column="user_role_id" />
         <association property="role" resultMap="RoleResultMap" />
     </resultMap>
@@ -20,15 +20,15 @@
 
     <insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
         insert into users values
-            (default, #{username}, #{password}, #{name}, #{email}, #{roleId})
+            (default, #{email}, #{name}, #{provider}, #{providerId}, #{roleId})
     </insert>
-    <select id="selectByUsername" resultMap="UserResultMap">
+    <select id="selectByProviderId" resultMap="UserResultMap">
         select
             u.id as user_id,
-            u.username,
-            u.password,
             u.name,
             u.email,
+            u.provider,
+            u.provider_id,
             u.role_id as user_role_id,
 
             r.id as role_id,
@@ -37,17 +37,17 @@
             users u
             left join roles r on r.id = u.role_id
         where
-            u.username = #{username}
+            u.provider_id = #{providerId}
         order by
             u.id
     </select>
     <select id="selectById" resultMap="UserResultMap">
         select
             u.id as user_id,
-            u.username,
-            u.password,
             u.name,
             u.email,
+            u.provider,
+            u.provider_id,
             u.role_id as user_role_id,
 
             r.id as role_id,

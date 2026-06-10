@@ -1,6 +1,8 @@
 package com.korit.ch04api.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.korit.ch04api.dto.ApiResponse;
+import com.korit.ch04api.dto.ErrorResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 @Component
 public class RestAccessDeniedHandler implements AccessDeniedHandler {
@@ -22,11 +23,7 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         ObjectMapper objectMapper = new ObjectMapper();
-        response.getWriter().println(objectMapper.writeValueAsString(Map.of(
-                "status", "403",
-                "error", "Forbidden",
-                "message", "요청 권한이 없습니다",
-                "path", request.getRequestURI()
-        )));
+        ErrorResponse errorResponse = new ErrorResponse("403", "Forbidden", "요청 권한이 없습니다", request.getRequestURI());
+        response.getWriter().println(objectMapper.writeValueAsString(ApiResponse.fail("권한 오류", errorResponse)));
     }
 }

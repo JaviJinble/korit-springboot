@@ -3,14 +3,21 @@ package com.korit.ch04api.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "공통 API 응답")
 @Data
 @Builder
 @AllArgsConstructor
 public class ApiResponse<T> {
 
+    @Schema(description = "요청 성공 여부", example = "true")
     private boolean success;
+
+    @Schema(description = "응답 메시지", example = "요청 성공.")
     private String message;
+
+    @Schema(description = "응답 본문")
     private T body;
 
     public static <T> ApiResponse<T> success() {

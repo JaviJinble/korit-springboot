@@ -12,3 +12,8 @@ mybatis:
 db:
   init-status:
     - roles: false
+
+
+app:
+  oauth2:
+    redirect-uri: http://localhost:5173/auth/oauth2/callback

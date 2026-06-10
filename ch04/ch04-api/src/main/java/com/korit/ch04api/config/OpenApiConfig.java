@@ -16,9 +16,9 @@ public class OpenApiConfig {
         OpenAPI openAPI = new OpenAPI();
 
         Info info = new Info();
-        info.title("");
+        info.title("CH04 API");
         info.version("1.0");
-        info.description("");
+        info.description("JWT/OAuth2 인증, Todo, 메모, 첨부파일, 내 정보 API 문서입니다. JSON API는 ApiResponse<T> 형식으로 응답하며, 파일 다운로드 성공 응답만 바이너리 스트림을 반환합니다.");
 
         SecurityRequirement securityRequirement = new SecurityRequirement();
         securityRequirement.addList("Bearer Authentication");
