@@ -3,94 +3,87 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.korit.todoapi.mapper.CategoryMapper">
+<mapper namespace="com.korit.todoapi.mapper.TodoMapper">
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        insert into categories values
-        ( default, #{userId}, #{name}, #{color}, #{icon}, #{createdAt} )
+        insert into todos values
+        ( default, #{userId}, #{categoryId}, #{title}, #{memo}, date(#{dueDate}), time(#{dueTime}), #{priority}, #{flagged}, #{completed}, #{completedAt}, #{createAt}, #{updatedAt})
     </insert>
-
     <update id="update">
+
+    </update>
+    <update id="updateFlag">
         update
-            categories
+            todos
         set
-            name = #{name},
-            color = #{color},
-            icon = #{icon}
+            is_flagged = #{flagged},
+            updated_at = now()
         where
             id = #{id}
             and user_id = #{userId}
     </update>
 
+    <update id="updateComplete">
+        update
+            todos
+        set
+            is_completed = #{completed},
+            completed_at = #{completedAt},
+            updated_at = now()
+        where
+            id = #{id}
+            and user_id = #{userId}
+    </update>
     <delete id="deleteByIdAndUserId">
-        delete from
-            categories
-        where
-            id = #{id}
-            and user_id = #{userId}
+
     </delete>
-
-
-    <select id="countNotCompletedByUserId" resultType="CategoryCompletionCounts">
+    <select id="selectAllByUserId" resultType="Todo">
         select
-            ctgr.id,
-            count(todos.id) as total_count,
-            count(if(todos.is_completed = 0, 1, null)) as not_completed_count
+            id, user_id, category_id, title, memo,
+            due_date, due_time, priority,
+            is_flagged, is_completed,
+            completed_at, create_at, updated_at
         from
-            categories ctgr
-            left join todos on todos.category_id = ctgr.id
-            and todos.user_id = ctgr.user_id
-        where
-            ctgr.user_id = #{userId}
-        group by
-            ctgr.id
-        order by
-            ctgr.id
-    </select>
-
-    <select id="selectByIdAndUserId" resultType="Category">
-        select
-            id,
-            user_id,
-            name,
-            color,
-            icon,
-            created_at
-        from
-            categories
+            todos
         where
             id = #{id}
             and user_id = #{userId}
     </select>
-    <select id="selectAllByUserId" resultType="Category">
+    <select id="selectByIdAndUserId" resultType="com.korit.todoapi.entity.Todo">
+        select
+            id, user_id, category_id, title, memo,
+            due_date, due_time, priority,
+            is_flagged, is_completed,
+            completed_at, create_at, updated_at
+        from
+            todos
+        where
+            id = #{id}
+            and user_id = #{userId}
+    </select>
+    <select id="selectAllByUserIdAndCondition" resultType="Todo">
         select
             id,
             user_id,
-            name,
-            color,
-            icon,
-            created_at
+            category_id,
+            title,
+            memo,
+            due_date,
+            due_time,
+            priority,
+            is_flagged,
+            is_completed,
+            completed_at,
+            create_at,
+            updated_at
         from
-            categories
+            todos
         where
             user_id = #{userId}
+            and due_date = #{condition.date}
         order by
+            due_date asc,
+            due_time asc,
             id desc
     </select>
-    <select id="selectByUserIdAndName" resultType="Category">
-        select
-            id,
-            user_id,
-            name,
-            color,
-            icon,
-            created_at
-        from
-            categories
-        where
-            user_id = #{userId}
-            and name = #{name}
-    </select>
-
-
 </mapper>

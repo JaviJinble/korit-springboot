@@ -1,5 +1,6 @@
 package com.korit.todoapi.common.exceptionController;
 
+import com.korit.todoapi.common.exception.CategoryNotFoundException;
 import com.korit.todoapi.common.exception.DuplicatedException;
 import com.korit.todoapi.dto.ApiResponse;
 import com.korit.todoapi.dto.NotValidResponse;
@@ -34,6 +35,11 @@ public class GlobalExceptionHandler {
                             fieldError.getDefaultMessage())
                 ).toList();
         return ResponseEntity.badRequest().body(ApiResponse.fail(new NotValidResponse("유효성 검사 오류", errorFields)));
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ApiResponse<CategoryNotFoundException>> categoryNotFound(CategoryNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(e));
     }
 
 }
