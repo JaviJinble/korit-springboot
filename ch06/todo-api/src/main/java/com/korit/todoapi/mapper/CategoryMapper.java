@@ -13,6 +13,8 @@ public interface CategoryMapper {
     int insert(Category category);
     List<CategoryCompletionCounts> countNotCompletedByUserId(Long userId);
     List<Category> selectAllByUserId(Long userId);
+    Category selectById(@Param("categoryId") Long categoryId);
+    Category selectByNameAndUserId(@Param("name") String name,@Param("userId") Long userId);
     Category selectByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
     int update(Category category);
     int deleteByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);

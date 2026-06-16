@@ -12,17 +12,31 @@
 
     <select id="selectByProviderId" resultType="User">
         select
-        id,
-        email,
-        nickname,
-        profile_image,
-        provider,
-        provider_id,
-        created_at
+            id,
+            email,
+            nickname,
+            profile_image,
+            provider,
+            provider_id,
+            created_at
         from
-        users
+            users
         where
-        provider_id = #{providerId}
+            provider_id = #{providerId}
+    </select>
+    <select id="selectById" resultType="User">
+        select
+            id,
+            email,
+            nickname,
+            profile_image,
+            provider,
+            provider_id,
+            created_at
+        from
+            users
+        where
+            id = #{userId}
     </select>
 
 

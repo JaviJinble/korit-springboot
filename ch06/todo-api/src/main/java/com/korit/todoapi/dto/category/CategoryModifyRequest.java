@@ -7,7 +7,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class CreateCategoryRequest {
+public class CategoryModifyRequest {
     private Long userId;
     @NotBlank(message = "카테고리 이름은 필수 입니다.")
     private String name;

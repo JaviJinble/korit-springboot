@@ -1,13 +1,10 @@
 package com.korit.todoapi.service;
 
 import com.korit.todoapi.common.exception.TodoNotFoundException;
-import com.korit.todoapi.dto.todo.CreateTodoRequest;
-import com.korit.todoapi.dto.todo.TodoSearchCondition;
-import com.korit.todoapi.dto.todo.UpdateTodoRequest;
+import com.korit.todoapi.dto.todo.*;
 import com.korit.todoapi.entity.Todo;
 import com.korit.todoapi.mapper.TodoMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,7 +15,7 @@ import java.util.List;
 public class TodoService {
     private final TodoMapper todoMapper;
 
-    public Todo create (Long userId, CreateTodoRequest request) {
+    public Todo create(Long userId, CreateTodoRequest request) {
         Todo todo = Todo.builder()
                 .userId(userId)
                 .categoryId(request.getCategoryId())
@@ -29,7 +26,7 @@ public class TodoService {
                 .priority(request.getPriority())
                 .flagged(false)
                 .completed(false)
-                .createAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
 
@@ -38,41 +35,62 @@ public class TodoService {
         return todo;
     }
 
-    public List<Todo> getTodos (Long userId, TodoSearchCondition condition) {
+    public List<TodoResponse> getAll(Long userId) {
+        return todoMapper.selectAll().stream().map(Todo::todoResponse).toList();
+    }
+
+
+    public List<Todo> getTodos(Long userId, TodoSearchCondition condition) {
         return todoMapper.selectAllByUserIdAndCondition(userId, condition);
     }
 
-    public Todo update (Long userId, Long todoId, UpdateTodoRequest request) {
+//    public void complete(TodoCompletionRequest dto) {
+//        todoMapper.updateComplete(dto.getTodoId(), dto.isCompleted());
+//    }
+
+    public void modify(TodoModifyRequest dto) {
+        todoMapper.update(dto.toTodo());
+    }
+
+    public void delete(Long todoId) {
+        todoMapper.delete(todoId);
+    }
+
+    public Todo update(Long userId, Long todoId, UpdateTodoRequest request) {
         Todo todo = todoMapper.selectByIdAndUserId(todoId, userId);
 
         if (todo == null) {
-            throw new TodoNotFoundException("존재하지 않습니다");
+            throw new TodoNotFoundException("Todo not found.");
         }
 
         todo.setCategoryId(request.getCategoryId());
         todo.setTitle(request.getTitle());
         todo.setMemo(request.getMemo());
+        todo.setDueDate(request.getDueDate());
+        todo.setDueTime(request.getDueTime());
+        todo.setPriority(request.getPriority());
+        todo.setUpdatedAt(LocalDateTime.now());
 
-        return null;
+        todoMapper.update(todo);
+
+        return todo;
     }
 
-    public void delete (Long userId, Long todoId) {
-        Todo todo = todoMapper.selectByIdAndUserId(userId, todoId);
+    public void delete(Long userId, Long todoId) {
+        Todo todo = todoMapper.selectByIdAndUserId(todoId, userId);
 
         if (todo == null) {
-            throw new TodoNotFoundException("");
+            throw new TodoNotFoundException("Todo not found.");
         }
 
         todoMapper.deleteByIdAndUserId(todoId, userId);
     }
 
-
-
     public Todo updateComplete(Long userId, Long todoId, UpdateTodoRequest request) {
         Todo todo = todoMapper.selectByIdAndUserId(todoId, userId);
 
         if (todo == null) {
-            throw new TodoNotFoundException("할 일을 찾을 수 없습니다.");
+            throw new TodoNotFoundException("Todo not found.");
         }
 
         todo.setCompleted(request.isCompleted());
@@ -88,7 +106,7 @@ public class TodoService {
         Todo todo = todoMapper.selectByIdAndUserId(todoId, userId);
 
         if (todo == null) {
-            throw new TodoNotFoundException("할 일을 찾을 수 없습니다.");
+            throw new TodoNotFoundException("Todo not found.");
         }
 
         todo.setFlagged(request.isFlagged());
@@ -98,5 +116,4 @@ public class TodoService {
 
         return todo;
     }
-
 }

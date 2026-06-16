@@ -7,7 +7,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-public class CreateTodoRequest {
+public class TodoModifyRequest {
+    private Long todoId;
     private Long userId;
     private Long categoryId;
     private String title;
@@ -19,6 +20,7 @@ public class CreateTodoRequest {
 
     public Todo toTodo() {
         return Todo.builder()
+                .id(todoId)
                 .userId(userId)
                 .categoryId(categoryId)
                 .title(title)
@@ -26,6 +28,7 @@ public class CreateTodoRequest {
                 .dueDate(dueDate)
                 .dueTime(dueTime)
                 .priority(priority)
+                .flagged(isFlagged)
                 .build();
     }
 }

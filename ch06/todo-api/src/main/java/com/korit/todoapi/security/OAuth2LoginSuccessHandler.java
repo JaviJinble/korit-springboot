@@ -1,6 +1,8 @@
 package com.korit.todoapi.security;
 
+import com.korit.todoapi.entity.Category;
 import com.korit.todoapi.entity.User;
+import com.korit.todoapi.mapper.CategoryMapper;
 import com.korit.todoapi.mapper.UserMapper;
 import com.korit.todoapi.security.jwt.JwtProvider;
 import jakarta.servlet.ServletException;
@@ -9,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final UserMapper userMapper;
     private final JwtProvider jwtProvider;
+    private final CategoryMapper categoryMapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -41,6 +43,13 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                     .createdAt(LocalDateTime.now())
                     .build();
             userMapper.insert(user);
+            Category category = Category.builder()
+                    .name("미분류")
+                    .userId(user.getId())
+                    .color("#222222")
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            categoryMapper.insert(category);
         }
 
         String target = UriComponentsBuilder.fromUriString("http://localhost:5173/auth/oauth2/callback")

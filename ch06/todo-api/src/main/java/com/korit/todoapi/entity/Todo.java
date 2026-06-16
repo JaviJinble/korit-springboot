@@ -1,5 +1,6 @@
 package com.korit.todoapi.entity;
 
+import com.korit.todoapi.dto.todo.TodoResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +9,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
 
 @Data
 @Builder
@@ -22,10 +22,26 @@ public class Todo {
     private String memo;
     private LocalDate dueDate;
     private LocalTime dueTime;
-    private String priority;
+    private int priority;
     private boolean flagged;
     private boolean completed;
     private LocalDateTime completedAt;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public TodoResponse todoResponse() {
+        return todoResponse().builder()
+                .todoId(id)
+                .userId(userId)
+                .categoryId(categoryId)
+                .title(title)
+                .memo(memo)
+                .dueDate(dueDate)
+                .dueTime(dueTime)
+                .priority(priority)
+                .flagged(flagged)
+                .completed(completed)
+                .completedAt(completedAt)
+                .build();
+    }
 }

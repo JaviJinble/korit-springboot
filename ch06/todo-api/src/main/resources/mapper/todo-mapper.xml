@@ -7,11 +7,25 @@
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into todos values
-        ( default, #{userId}, #{categoryId}, #{title}, #{memo}, date(#{dueDate}), time(#{dueTime}), #{priority}, #{flagged}, #{completed}, #{completedAt}, #{createAt}, #{updatedAt})
+        ( default, #{userId}, #{categoryId}, #{title}, #{memo}, date(#{dueDate}), time(#{dueTime}), #{priority}, #{flagged}, #{completed}, #{completedAt}, #{createdAt}, #{updatedAt})
     </insert>
     <update id="update">
-
+        update
+            todos
+        set
+            category_id = #{categoryId},
+            title = #{title},
+            memo = #{memo},
+            due_date = #{dueDate},
+            due_time = #{dueTime},
+            priority = #{priority},
+            is_flagged = #{flagged},
+            updated_at = #{updatedAt}
+        where
+            id = #{id}
+            and user_id = #{userId}
     </update>
+
     <update id="updateFlag">
         update
             todos
@@ -34,27 +48,56 @@
             id = #{id}
             and user_id = #{userId}
     </update>
-    <delete id="deleteByIdAndUserId">
 
-    </delete>
-    <select id="selectAllByUserId" resultType="Todo">
-        select
-            id, user_id, category_id, title, memo,
-            due_date, due_time, priority,
-            is_flagged, is_completed,
-            completed_at, create_at, updated_at
+    <update id="updateCompleted">
+        update
+            todos
+        set
+            is_completed = #{completed},
+            completed_at = now(),
+            updated_at = now()
+        where
+            id = #{todoId}
+    </update>
+
+    <delete id="deleteByIdAndUserId">
+        delete
         from
             todos
         where
             id = #{id}
             and user_id = #{userId}
+    </delete>
+
+    <delete id="delete">
+        delete
+        from
+            todos
+        where
+            id = #{todoId}
+    </delete>
+
+    <select id="selectAllByUserId" resultType="Todo">
+        select
+            id, user_id, category_id, title, memo,
+            due_date, due_time, priority,
+            is_flagged, is_completed,
+            completed_at, created_at, updated_at
+        from
+            todos
+        where
+            user_id = #{userId}
+        order by
+            due_date asc,
+            due_time asc,
+            id desc
     </select>
     <select id="selectByIdAndUserId" resultType="com.korit.todoapi.entity.Todo">
         select
             id, user_id, category_id, title, memo,
             due_date, due_time, priority,
             is_flagged, is_completed,
-            completed_at, create_at, updated_at
+            completed_at, created_at, updated_at
         from
             todos
         where
@@ -74,16 +117,67 @@
             is_flagged,
             is_completed,
             completed_at,
-            create_at,
+            created_at,
             updated_at
         from
             todos
-        where
+        <where>
             user_id = #{userId}
-            and due_date = #{condition.date}
+            <if test="condition.date != null">
+                and due_date = #{condition.date}
+            </if>
+            <if test="condition.categoryId != null">
+                and category_id = #{condition.categoryId}
+            </if>
+            <if test="condition.completed != null">
+                and is_completed = #{condition.completed}
+            </if>
+        </where>
         order by
             due_date asc,
             due_time asc,
             id desc
+    </select>
+
+    <select id="selectAll" resultType="Todo">
+        select
+            id,
+            user_id,
+            category_id,
+            title,
+            memo,
+            due_date,
+            due_time,
+            priority,
+            is_flagged,
+            is_completed,
+            completed_at,
+            created_at,
+            updated_at
+        from
+            todos
+        order by
+            due_date desc,
+            due_time
+    </select>
+    <select id="selectById" resultType="Todo">
+        select
+            id,
+            user_id,
+            category_id,
+            title,
+            memo,
+            due_date,
+            due_time,
+            priority,
+            is_flagged,
+            is_completed,
+            completed_at,
+            created_at,
+            updated_at
+        from
+            todos
+        where
+            id = #{todoId}
     </select>
 </mapper>

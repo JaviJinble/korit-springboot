@@ -23,7 +23,8 @@
     </update>
 
     <delete id="deleteByIdAndUserId">
-        delete from
+        delete
+        from
             categories
         where
             id = #{id}
@@ -90,6 +91,34 @@
         where
             user_id = #{userId}
             and name = #{name}
+    </select>
+    <select id="selectById" resultType="Category">
+        select
+            id,
+            name,
+            user_id,
+            color,
+            icon,
+            created_at
+        from
+            categories
+        where
+            id = #{categoryId}
+    </select>
+
+    <select id="selectByNameAndUserId" resultType="Category">
+        select
+            id,
+            name,
+            user_id,
+            color,
+            icon,
+            created_at
+        from
+            categories
+        where
+            name = #{name}
+            and user_id = #{userId}
     </select>
 
 

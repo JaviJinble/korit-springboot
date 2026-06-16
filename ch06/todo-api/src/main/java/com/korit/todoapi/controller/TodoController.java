@@ -1,8 +1,10 @@
 package com.korit.todoapi.controller;
 
+import com.korit.todoapi.dto.ApiResponse;
 import com.korit.todoapi.dto.todo.CreateTodoRequest;
 import com.korit.todoapi.dto.todo.TodoSearchCondition;
 import com.korit.todoapi.dto.todo.UpdateTodoRequest;
+import com.korit.todoapi.entity.Todo;
 import com.korit.todoapi.service.TodoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +29,13 @@ public class TodoController {
         return ResponseEntity.ok(todoService.create(userId, request));
     }
 
+    @PostMapping("/post/create")
+    public ResponseEntity<ApiResponse<?>> create (@AuthenticationPrincipal Long userId, @RequestBody CreateTodoRequest dto) {
+        return ResponseEntity.ok(ApiResponse.success(todoService.create(userId, dto)));
+    }
+
     @PutMapping("{todoId}")
-    public ResponseEntity<?> update (@AuthenticationPrincipal Long userId, @PathVariable Long todoId, @RequestBody UpdateTodoRequest request) {
+    public ResponseEntity<Todo> update (@AuthenticationPrincipal Long userId, @PathVariable Long todoId, @RequestBody UpdateTodoRequest request) {
         return ResponseEntity.ok(todoService.update(userId, todoId, request));
     }
 

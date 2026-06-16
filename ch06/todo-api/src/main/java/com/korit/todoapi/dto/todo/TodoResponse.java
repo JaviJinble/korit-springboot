@@ -1,5 +1,6 @@
 package com.korit.todoapi.dto.todo;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -7,7 +8,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Data
-public class UpdateTodoRequest {
+@Builder
+public class TodoResponse {
+    private Long todoId;
+    private Long userId;
     private Long categoryId;
     private String title;
     private String memo;
@@ -16,5 +20,5 @@ public class UpdateTodoRequest {
     private int priority;
     private boolean flagged;
     private boolean completed;
-    private LocalDateTime updateAt;
+    private LocalDateTime completedAt;
 }
