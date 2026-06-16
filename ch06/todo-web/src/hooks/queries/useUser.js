@@ -7,6 +7,7 @@ export const useMe = () => {
     return useQuery({
         queryKey: ["me", accessToken],
         queryFn: () => getMeRequest(),
+        retry: 0,
         enabled: !!accessToken,
         staleTime: 6000 * 10,
         gcTime: 6000 * 10,
