@@ -8,9 +8,7 @@ export function ProtectedRoutes() {
         return <h1>로딩중...</h1>
     }
 
-    console.log(meQuery.data)
-
-    const isLoggedIn = meQuery.data.success;
+    const isLoggedIn = !!meQuery.data?.success;
 
     if (!isLoggedIn) {
         return <Navigate to={"/auth/login"} replace={true} />
@@ -27,7 +25,7 @@ export function PublicOnlyRoute() {
     }
 
 
-    const isLoggedIn = meQuery.data.success;
+    const isLoggedIn = !!meQuery.data?.success;
 
     if (isLoggedIn) {
         return <Navigate to={"/"} replace={true} />
