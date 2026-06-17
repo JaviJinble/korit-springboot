@@ -31,3 +31,11 @@ export const iconGroup = css`
     display: flex;
     gap: 5px;
 `;
+
+export const main = css`
+    position: relative;
+    display: flex;
+    width: 100%;
+    flex-grow: 1;
+    background-color:  #dbdbdb;
+`;

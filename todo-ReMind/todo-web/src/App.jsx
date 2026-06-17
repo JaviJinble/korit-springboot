@@ -5,6 +5,8 @@ import LoginCallback from "./pages/LoginCallback/LoginCallback";
 import { Global } from "@emotion/react";
 import { global } from "./styles/global";
 import RootLayout from "./components/layout/RootLayout";
+import Home from "./pages/Home/Home";
+import Register from "./pages/Register/Register";
 
 function App() {
     return (
@@ -18,7 +20,8 @@ function App() {
                     </Route>
 
                     <Route element={<ProtectedRoutes />}>
-                        <Route path="*" element={<></>} />
+                        <Route path="/" element={<Home />} />
+                        <Route path="/register" element={<Register />} />
                     </Route>
                 </Routes>
             </RootLayout>

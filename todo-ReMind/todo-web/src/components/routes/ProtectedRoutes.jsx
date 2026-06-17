@@ -1,12 +1,12 @@
 import { Navigate, Outlet } from "react-router";
 import { useMe } from "../../hooks/queries/useUser";
+import { useSpinnersStore } from "../../store/spinners";
 
 export function ProtectedRoutes() {
     const meQuery = useMe();
+    const setLoading = useSpinnersStore((state) => state.setLoading);
+    setLoading(meQuery.isLoading);
 
-    if (meQuery.isLoading) {
-        return <h1>로딩중...</h1>
-    }
 
     const isLoggedIn = !!meQuery.data?.success;
 
@@ -19,11 +19,8 @@ export function ProtectedRoutes() {
 
 export function PublicOnlyRoute() {
     const meQuery = useMe();
-
-    if (meQuery.isLoading) {
-        return <h1>로딩중...</h1>
-    }
-
+    const setLoading = useSpinnersStore((state) => state.setLoading);
+    setLoading(meQuery.isLoading);
 
     const isLoggedIn = !!meQuery.data?.success;
 

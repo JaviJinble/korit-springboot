@@ -1,5 +1,4 @@
 import { Navigate, useSearchParams } from "react-router";
-import { useEffect } from "react";
 
 function LoginCallback() {
     const [ searchParams ] = useSearchParams();
