@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.todoapi.mapper.TodoMapper">
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into todos values
+            (default, #{userId}, #{categoryId}, #{title}, #{memo}, #{dueDate}, #{dueTime}, #{priority}, #{isFlagged}, #{isCompleted}, #{completedAt}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update">
+        update
+            todos
+        set
+            category_id = #{categoryId},
+            title = #{title},
+            memo = #{memo},
+            due_date = #{dueDate},
+            due_time = #{dueTime},
+            priority = #{priority},
+            is_flagged = #{isFlagged},
+            updated_at = #{updatedAt}
+        where
+            id = #{id}
+    </update>
+    <update id="updateCompleted">
+        update
+            todos
+        set
+            is_completed = #{isCompleted},
+            completed_at = now(),
+            updated_at = now()
+        where
+            id = #{todoId}
+    </update>
+    <delete id="delete">
+        delete
+        from
+            todos
+        where
+            id = #{todoId}
+    </delete>
+    <select id="selectById" resultType="Todo">
+        select
+            id,
+            user_id,
+            category_id,
+            title,
+            memo,
+            due_date,
+            due_time,
+            priority,
+            is_flagged,
+            is_completed,
+            completed_at,
+            created_at,
+            updated_at
+        from
+            todos
+        where
+            id = #{todoId}
+
+    </select>
+    <select id="selectAll" resultType="Todo">
+        select
+            id,
+            user_id,
+            category_id,
+            title,
+            memo,
+            due_date,
+            due_time,
+            priority,
+            is_flagged,
+            is_completed,
+            completed_at,
+            created_at,
+            updated_at
+        from
+            todos
+        order by
+            due_date desc,
+            due_time
+    </select>
+</mapper>

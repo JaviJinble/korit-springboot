@@ -17,7 +17,7 @@ function App() {
         <>
             <Global styles={globalStyles} />
             <DeepSpaceLayout>
-                <Routes>
+                <Routes> 
                     <Route path="/" element={<></>} />
                     <Route path="/oauth2/redirect" element={<OAuth2Redirect />} />
 

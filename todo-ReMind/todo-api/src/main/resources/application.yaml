@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    include:
+      - secret
+      - db
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml   # mapper.xml파일 경로 설정
+  type-aliases-package: com.korit.todoapi.entity   # mapper.xml안에서 entity 참조 경로 설정
+  configuration:
+    map-underscore-to-camel-case: true          # 스네이크 표기법을 카멜표기법으로 자동 치환
+    jdbc-type-for-null: 'NULL'                  # JAVA에서 null값을 MySQL의 NULL이라는 표기로 변환
