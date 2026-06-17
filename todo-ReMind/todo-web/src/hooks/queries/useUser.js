@@ -8,7 +8,7 @@ export const useMe = () => {
         queryKey: ["me", accessToken],
         queryFn: getMeRequest,
         retry: 0,
-        staleTime: 6000 * 10,
-        gcTime: 6000 * 10,
+        staleTime: 6000 * 60 * 24,
+        gcTime: 6000 * 60 * 24,
     });
 }
