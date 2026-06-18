@@ -116,3 +116,25 @@ export const categoryCount = css`
     font-weight: 600;
 `;
 
+export const categoryColorLababel = (color) => css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    background-color: ${color};
+
+    & > input {
+        display: none;
+    }
+
+    & > input:checked + div {
+        box-sizing: border-box;
+        border-radius: 50%;
+        border: 1px solid #e14646;
+        width: 38px;
+        height: 38px;
+
+    }
+`;

@@ -100,7 +100,7 @@ function CategoryRegister() {
         <div>
             {
                 colors.map(c => (
-                    <label key={c.id}>
+                    <label key={c.id} css={s.categoryColorLababel(c.color)}>
                         <input type="radio" />
                         {c.color}
                     </label>
