@@ -3,7 +3,7 @@ import {
     getCategoryColorsAndIcons,
     getCategoryRequest,
     getNotCompletedCount,
-} from "../../api/categoryApis,js"
+} from "../../api/categoryApis.js"
 
 export const useCategories = () => {
 
