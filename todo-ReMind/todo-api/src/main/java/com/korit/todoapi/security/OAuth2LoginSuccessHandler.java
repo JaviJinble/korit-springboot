@@ -48,7 +48,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             userMapper.insert(user);
             Category category = Category.builder()
                     .name("미분류")
-                    .color("#222222")
+                    .colorId(1l)
+                    .iconId(1l)
                     .createdAt(LocalDateTime.now())
                     .build();
             categoryMapper.insert(category);

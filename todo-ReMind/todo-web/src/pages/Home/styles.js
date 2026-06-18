@@ -30,6 +30,7 @@ export const profile = (url) => css`
 export const cards = css`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    margin-bottom: 28px;
     gap: 12px;
     padding: 12px 14px 0;
 `;
@@ -69,11 +70,48 @@ export const listGroup = css`
             height: 60px;
             background-color: #ffffff;
             cursor: pointer;
+
+
+            & > a {
+                display: flex;
+                align-items: center;
+                gap: 13px;
+                height: 100%;
+                font-size: 17px;
+                font-weight: 600;
+                text-decoration: none;
+                color: #1c1c1e;
+            }
         }
 
-        & > li:not(li:nth-last-child(1)) {
+        & > li:not(li:nth-last-of-type(1)) {
             border-bottom: 1px solid #f5f5f7;
             height: 61px;
         }
     }
+`;
+
+export const categoryIcon = (color) => css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    border-radius: 50%;
+    padding-bottom: 4px;
+    width: 34px;
+    height: 34px;
+    background-color: ${color};
+
+`;
+
+export const categoryName = css`
+    flex-grow: 1;
+`;
+
+export const categoryCount = css`
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    color: #8e8e93;
+    font-weight: 600;
 `;

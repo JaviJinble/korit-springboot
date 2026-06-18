@@ -1,7 +1,9 @@
 package com.korit.todoapi.mapper;
 
 import com.korit.todoapi.entity.Category;
+import com.korit.todoapi.entity.CategoryColor;
 import com.korit.todoapi.entity.CategoryCompletionCount;
+import com.korit.todoapi.entity.CategoryIcon;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -15,4 +17,6 @@ public interface CategoryMapper {
     int update(Category category);
     int delete(Long categoryId);
     List<CategoryCompletionCount> countNotCompletedByUserId(Long userId);
+    List<CategoryColor> selectAllCategoryColor();
+    List<CategoryIcon> selectAllCategoryIcon();
 }

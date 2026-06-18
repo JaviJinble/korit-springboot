@@ -16,16 +16,21 @@ public class Category {
     private Long id;
     private Long userId;
     private String name;
-    private String color;
-    private String icon;
+    private Long colorId;
+    private Long iconId;
     private LocalDateTime createdAt;
+
+    private CategoryColor categoryColor;
+    private CategoryIcon categoryIcon;
 
     public CategoryResponse toResponse() {
         return CategoryResponse.builder()
                 .categoryId(id)
                 .categoryName(name)
-                .categoryColor(color)
-                .categoryIcon(icon)
+                .categoryColorId(colorId)
+                .categoryColor(categoryColor != null ? categoryColor.getColor() : null)
+                .categoryIconId(iconId)
+                .categoryIcon(categoryIcon != null ? categoryIcon.getIcon() : null)
                 .build();
     }
 }

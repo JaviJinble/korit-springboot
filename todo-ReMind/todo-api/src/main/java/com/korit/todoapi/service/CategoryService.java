@@ -2,6 +2,7 @@ package com.korit.todoapi.service;
 
 import com.korit.todoapi.common.exception.DuplicatedException;
 import com.korit.todoapi.dto.CreateResponse;
+import com.korit.todoapi.dto.category.CategoryColorsAndIconsResponse;
 import com.korit.todoapi.dto.category.CategoryCreateRequest;
 import com.korit.todoapi.dto.category.CategoryModifyRequest;
 import com.korit.todoapi.dto.category.CategoryResponse;
@@ -52,6 +53,13 @@ public class CategoryService {
 
     public List<CategoryCompletionCount> getNotCompletedCount(Long userId) {
         return categoryMapper.countNotCompletedByUserId(userId);
+    }
+
+    public CategoryColorsAndIconsResponse getColorsAndIcons() {
+        return CategoryColorsAndIconsResponse.builder()
+                .categoryColors(categoryMapper.selectAllCategoryColor())
+                .categoryIcons(categoryMapper.selectAllCategoryIcon())
+                .build();
     }
 
 }
