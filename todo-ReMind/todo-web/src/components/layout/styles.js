@@ -39,6 +39,7 @@ export const main = css`
     width: 100%;
     flex-grow: 1;
     background-color:  #F5F5FA;
+    overflow-y: hidden;
 `;
 
 export const modalLayout = css`

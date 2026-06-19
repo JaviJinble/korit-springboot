@@ -27,3 +27,21 @@ export const getNotCompletedCount = async () => {
         return error.response.data;
     }
 }
+
+export const registerCategory = async (data) => {
+    try{
+        const response = await axiosInstance.post("/api/categories", data);
+        return response.data;
+    }catch(error) {
+        return error.response.data;
+    }
+}
+
+export const deleteCategory = async (id) => {
+    try{
+        const response = await axiosInstance.delete(`/api/categories/${id}`);
+        return response.data;
+    }catch(error) {
+        return error.response.data;
+    }
+}

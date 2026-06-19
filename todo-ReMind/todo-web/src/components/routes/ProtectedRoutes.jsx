@@ -7,6 +7,9 @@ export function ProtectedRoutes() {
     const setLoading = useSpinnersStore((state) => state.setLoading);
     setLoading(meQuery.isLoading);
 
+    if (meQuery.isLoading) {
+        return null;
+    }
 
     const isLoggedIn = !!meQuery.data?.success;
 

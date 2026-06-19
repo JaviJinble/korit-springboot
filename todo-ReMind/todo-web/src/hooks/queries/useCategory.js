@@ -25,10 +25,13 @@ export const useCategoryColorsAndIcons = () => {
 }
 
 export const useCategoryNotCompletedCount = () => {
+    const categoriesQuery = useCategories();
+
     return useQuery({
         queryKey: ["categoryNotCompletedCount"],
         queryFn: getNotCompletedCount,
         staleTime: 1000* 60 * 60 * 24,
         gcTime: 1000* 60 * 60 * 24,
+        enabled: !!categoriesQuery.data,
     });
 }
