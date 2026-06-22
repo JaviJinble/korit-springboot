@@ -7,7 +7,7 @@ import { useBottomModalStore } from "../../store/modalStore";
 function RootLayout({ children }) {
     const isLoading = useSpinnersStore((state) => state.isLoading);
     const isModalOpen = useBottomModalStore((state) => state.isOpen);
-    const setMoadlOpen = useBottomModalStore((state) => state.setOpen);
+    const setModalOpen = useBottomModalStore((state) => state.setOpen);
     const modalChildren =  useBottomModalStore((state) => state.children);
 
     const [time, setTime] = useState("00:00");
@@ -54,7 +54,7 @@ function RootLayout({ children }) {
             </div>
             {
                 isModalOpen && (
-                    <div css={s.modalLayout} onClick={() => setMoadlOpen(false)}>
+                    <div css={s.modalLayout} onClick={() => setModalOpen(false)}>
                         <div onClick={(e) => {e.stopPropagation()}}>
                             <header>
                                 <div></div>

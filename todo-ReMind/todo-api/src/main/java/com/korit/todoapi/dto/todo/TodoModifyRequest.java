@@ -1,5 +1,6 @@
 package com.korit.todoapi.dto.todo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.korit.todoapi.entity.Todo;
 import lombok.Data;
 

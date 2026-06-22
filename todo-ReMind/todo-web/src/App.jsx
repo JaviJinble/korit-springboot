@@ -7,6 +7,7 @@ import { global } from "./styles/global";
 import RootLayout from "./components/layout/RootLayout";
 import Home from "./pages/Home/Home";
 import Register from "./pages/Register/Register";
+import TodoList from "./pages/TodoList/TodoList";
 
 function App() {
     return (
@@ -21,7 +22,9 @@ function App() {
 
                     <Route element={<ProtectedRoutes />}>
                         <Route path="/" element={<Home />} />
+
                         <Route path="/register" element={<Register />} />
+                        <Route path="/categories/:categoryName/todos" element={<TodoList />} />
                     </Route>
                 </Routes>
             </RootLayout>

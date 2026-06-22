@@ -1,9 +1,11 @@
 package com.korit.todoapi.dto.todo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.korit.todoapi.entity.Todo;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Data
@@ -15,6 +17,7 @@ public class TodoCreateRequest {
     private LocalDate dueDate;
     private LocalTime dueTime;
     private int priority;
+    @JsonProperty("isFlagged")
     private boolean isFlagged ;
 
     public Todo toTodo() {
@@ -27,6 +30,8 @@ public class TodoCreateRequest {
                 .dueTime(dueTime)
                 .priority(priority)
                 .isFlagged(isFlagged)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 }
